@@ -282,6 +282,22 @@ html, body, [class*="css"] {
     border: 1px solid #B8D8D2; font-size: 13.5px; margin: 6px 0 8px 0;
 }
 
+/* ── Domain heading + prompt (used by anchor_radio and slider pages) ── */
+.domain-heading {
+    font-size: 28px !important;
+    font-weight: 700 !important;
+    color: #164A41 !important;
+    margin: 28px 0 4px 0 !important;
+    letter-spacing: -0.3px;
+    line-height: 1.2;
+}
+.domain-prompt {
+    font-size: 14px !important;
+    color: #64748B !important;
+    margin: 0 0 16px 0 !important;
+    line-height: 1.5;
+}
+
 /* ── Anchor radio blocks ── */
 div[data-testid="stRadio"] > label { font-size: 14px !important; font-weight: 600 !important; color: #164A41 !important; margin-bottom: 10px !important; }
 div[data-testid="stRadio"] > div { gap: 6px !important; }
@@ -396,23 +412,22 @@ def score_slider(label, key, hint=None):
     st.session_state[key] = val   # write back to persistent storage key
     return val
 
-def anchor_radio(domain, key, hint, anchors):
-    """One card per domain with radio buttons showing full anchor descriptions."""
+def anchor_radio(domain, key, prompt, anchors):
+    """Domain heading + question prompt + radio with first-person anchor descriptions."""
     wkey = f"_w_{key}"
     if wkey not in st.session_state:
         st.session_state[wkey] = st.session_state.get(key, 2)
-    st.markdown(f'<div class="card"><div class="card-title">{domain}</div>', unsafe_allow_html=True)
-    if hint:
-        st.markdown(f'<div class="sub-dim-hint">{hint}</div>', unsafe_allow_html=True)
+    st.markdown(f'<h2 class="domain-heading">{domain}</h2>', unsafe_allow_html=True)
+    if prompt:
+        st.markdown(f'<p class="domain-prompt">{prompt}</p>', unsafe_allow_html=True)
     val = st.radio(
         domain,
         options=list(range(6)),
-        format_func=lambda x: f"{anchors[x][0]} — {anchors[x][1]}: {anchors[x][2]}",
+        format_func=lambda x: f"{anchors[x][0]} - {anchors[x][1]}. {anchors[x][2]}",
         key=wkey,
         label_visibility="collapsed",
     )
     st.session_state[key] = val
-    st.markdown('</div>', unsafe_allow_html=True)
     return val
 
 def comment_box(key, placeholder="Add comments, justification or context…"):
@@ -479,75 +494,75 @@ pages and your inputs will be retained. The <strong>Results page</strong> shows 
 recommended pay level, and full compensation package, with an Excel export.""")
 
     st.markdown("""<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:4px;">
-  <div style="background:#F8FAFD;border:1px solid #E2EAF4;border-radius:10px;padding:14px 16px;">
-    <div style="font-size:11px;font-weight:700;letter-spacing:0.07em;text-transform:uppercase;color:#1A3A5C;">Competency</div>
+  <div style="background:#F5FAF8;border:1px solid #D8EBE7;border-radius:10px;padding:14px 16px;">
+    <div style="font-size:11px;font-weight:700;letter-spacing:0.07em;text-transform:uppercase;color:#164A41;">Competency</div>
     <div style="font-size:11px;color:#94A3B8;margin-top:3px;">Technical + Behavioural · 25% weight</div>
   </div>
-  <div style="background:#F8FAFD;border:1px solid #E2EAF4;border-radius:10px;padding:14px 16px;">
-    <div style="font-size:11px;font-weight:700;letter-spacing:0.07em;text-transform:uppercase;color:#1A3A5C;">Capital & Responsibility</div>
+  <div style="background:#F5FAF8;border:1px solid #D8EBE7;border-radius:10px;padding:14px 16px;">
+    <div style="font-size:11px;font-weight:700;letter-spacing:0.07em;text-transform:uppercase;color:#164A41;">Capital & Responsibility</div>
     <div style="font-size:11px;color:#94A3B8;margin-top:3px;">Professional Capital + Responsibility · 50% weight</div>
   </div>
-  <div style="background:#F8FAFD;border:1px solid #E2EAF4;border-radius:10px;padding:14px 16px;">
-    <div style="font-size:11px;font-weight:700;letter-spacing:0.07em;text-transform:uppercase;color:#1A3A5C;">Effort & Context</div>
+  <div style="background:#F5FAF8;border:1px solid #D8EBE7;border-radius:10px;padding:14px 16px;">
+    <div style="font-size:11px;font-weight:700;letter-spacing:0.07em;text-transform:uppercase;color:#164A41;">Effort & Context</div>
     <div style="font-size:11px;color:#94A3B8;margin-top:3px;">Effort + Working Conditions · 25% weight</div>
   </div>
 </div>""", unsafe_allow_html=True)
 
 
 TECH_ANCHORS = {
-    "Legal / Core competency": {
-        "hint": "Solid legal expertise and ability to apply legal reasoning to business and organisational questions.",
+    "Legal": {
+        "prompt": "How would you estimate the level of your legal expertise and the ability to apply legal reasoning to new and unfamiliar business and organisational questions?",
         "anchors": [
-            (0, "Aptitude",                      "Strong analytical and legal reasoning potential. Understands core legal logic conceptually but cannot yet apply it professionally."),
-            (1, "Legal foundation",              "Legally literate consultant — not yet an independent legal advisor. Understands core principles (employment, reward, governance, labour, social security, tax law); interprets standard positions with guidance."),
-            (2, "Independent legal professional","Fully functional legal professional. Independently analyses legal questions, translates law into business-relevant advice, and advises on standard scenarios without supervision."),
-            (3, "Advanced legal specialist",     "Trusted senior legal-strategic consultant. Handles complex, multi-dimensional questions independently; integrates law with reward strategy and governance; anticipates legal consequences of strategic choices."),
-            (4, "Legal authority",               "Legal authority in strategic consultancy context. Defines positions in complex or high-impact situations; shapes legal governance frameworks; acts as reference authority within the practice."),
-            (5, "Legal architect / thought leader", "Legal architect of strategic people and reward governance. Develops new methodologies; shapes how law is applied to reward strategy; influences professional or industry thinking."),
+            (0, "Aptitude",                "I believe to have strong analytical and legal reasoning potential. I understand core legal logic conceptually, but have not yet applied it in a professional, real-life context."),
+            (1, "Foundation",              "I have applied legal reasoning in a professional, real-life context. Although not yet an independent legal advisor, with the proper guidance I can deliver advice and take positions in standard contexts."),
+            (2, "Independent advisor",     "I can independently analyse legal questions and translate law into business-relevant advice. I can deliver advice and take positions without any supervision or guidance."),
+            (3, "Senior advisor",          "I can act as a trusted legal advisor for clients. I can deliver advice and take positions in complex, multidimensional contexts independently."),
+            (4, "Authority",               "I can define a position in complex, high-impact situations and/or in completely new and unfamiliar contexts. Accordingly, I am able to shape legal frameworks and can act as a reference within the practice."),
+            (5, "Thought leader",          "I cannot only be considered a reference within the practice internally, but also in the market. As such, I am able to develop new methodologies and influence industry thinking."),
         ],
     },
     "Data": {
-        "hint": "Data literacy and ability to work with structured analyses and computations.",
+        "prompt": "How would you estimate your data literacy and your ability to build structured analyses, models, and computations?",
         "anchors": [
-            (0, "Aptitude",               "Strong quantitative and analytical aptitude. Understands basic data, mathematical, and logical concepts but cannot yet apply them professionally."),
-            (1, "Foundational",           "Can perform basic calculations, use simple formulas, translate some business logic into Excel, and follow predefined models. Computation is mechanical and guided."),
-            (2, "Independent professional","Can build structured calculation models, perform multi-step computations, check consistency and logic, and apply quantitative reasoning independently. Minimum professional data level."),
-            (3, "Advanced professional",  "Can design complex computational models, integrate multiple datasets, handle assumptions and scenarios, and combine computation with analytical judgment. Tools: advanced Excel, Power Query, SQL."),
-            (4, "Expert",                 "Can design data and computation architectures, handle statistical or algorithmic complexity, and validate models conceptually. Tools: Python, R, SQL, BI, advanced modelling."),
-            (5, "Reference authority",    "Designs or defines advanced computational and analytical methodologies. Influences how data analysis is done across the firm — operates beyond tool-level expertise."),
+            (0, "Aptitude",                "I believe to have strong quantitative and analytical aptitude. I understand basic data, mathematical, and logical concepts, but have not yet applied them in a professional, real-life context."),
+            (1, "Foundation",              "I can perform basic calculations and use simple formulas. With the proper guidance, I can translate business logic into Excel (or another calculation framework) and follow predefined models."),
+            (2, "Independent professional","I can build structured calculation models, perform multi-step computations, and check consistency and logic. I apply quantitative reasoning independently."),
+            (3, "Advanced professional",   "I can design complex computational models, integrate multiple datasets, and handle assumptions, sensitivities, and scenarios. I combine computation with analytical judgment."),
+            (4, "Expert",                  "I can design data and computation architectures and handle statistical, financial, or algorithmic complexity. I validate and challenge models both conceptually and technically."),
+            (5, "Thought leader",          "I design and define advanced computational and analytical methodologies. I influence how data analysis is done across the firm and operate well beyond tool-level expertise."),
         ],
     },
     "Strategy": {
-        "hint": "Strategic thinking and ability to integrate legal and quantitative insights with strategic considerations.",
+        "prompt": "How would you estimate your strategic thinking and your ability to integrate legal and quantitative insights into strategic recommendations?",
         "anchors": [
-            (0, "Aptitude",                        "Demonstrates curiosity about how organisations create value. Can follow strategic reasoning but does not yet apply it independently."),
-            (1, "Strategy foundation",             "Strategically literate consultant — not yet an independent strategist. Applies standard tools under guidance; communicates strategic concepts clearly."),
-            (2, "Independent strategy professional","Conducts structured strategic analyses independently; formulates coherent problem statements; synthesises qualitative and quantitative insights; supports decision-making with well-reasoned recommendations."),
-            (3, "Advanced strategy specialist",    "Designs analyses tailored to complex contexts; challenges assumptions; evaluates strategic options with clear trade-off logic; integrates market, organisational, financial, and human factors."),
-            (4, "Strategy authority",              "Defines strategic direction for business units or organisations; designs strategic planning and governance processes; advises top decision-makers on long-term implications."),
-            (5, "Strategy architect / thought leader", "Develops new strategic concepts or methodologies; influences organisational or industry strategic thinking; integrates strategy with transformation, culture, and governance."),
+            (0, "Aptitude",                "I am curious about how organisations create value and I understand basic business logic. I can follow strategic reasoning, but have not yet applied it independently in a professional context."),
+            (1, "Foundation",              "I understand basic strategy concepts and frameworks. With the proper guidance, I can apply standard strategy tools, structure information for analysis, and communicate strategic concepts clearly."),
+            (2, "Independent professional","I can independently conduct structured strategic analyses, formulate coherent problem statements, and synthesise qualitative and quantitative insights to support decision-making."),
+            (3, "Advanced specialist",     "I can design strategic analyses for complex contexts, challenge assumptions, evaluate options with clear trade-off logic, and integrate market, organisational, financial, and human factors."),
+            (4, "Authority",               "I can define strategic direction for business units or organisations, design strategic planning and governance processes, and advise top decision-makers on long-term implications."),
+            (5, "Thought leader",          "I develop new strategic concepts and methodologies. I influence organisational and industry strategic thinking and integrate strategy with transformation, culture, and governance."),
         ],
     },
     "Leadership": {
-        "hint": "Enabling others and the organisation to perform — not hierarchical authority. Requires at least level 2 across the three technical domains.",
+        "prompt": "How would you estimate your ability to enable others and the organisation to perform — through expertise, judgment, and example rather than hierarchical authority?",
         "anchors": [
-            (0, "Leadership aptitude",        "No demonstrated leadership yet, but clear leadership potential. Demonstrates openness to responsibility; accepts guidance constructively."),
-            (1, "Self-leadership",            "Leads own work through professional discipline and judgment. Takes ownership of own work, quality, and deadlines; demonstrates accountability for own outputs."),
-            (2, "Informal expert leadership", "Leads peers through expertise, not authority. Supports peers through content-based problem-solving; shares expertise proactively; builds trust through competence and reliability."),
-            (3, "Team leadership",            "Leads delivery by integrating multiple areas of expertise. Leads teams or projects based on subject-matter authority; guides performance through coaching; resolves conflicts using professional judgment."),
-            (4, "Organisational leadership",  "Leads the organisation by setting professional direction and standards. Leads multiple teams through professional authority; shapes culture; builds leadership capability in others."),
-            (5, "Institutional leadership",   "Leads the institution through vision, credibility, and stewardship. Shapes organisational identity and long-term direction; acts as a moral and professional reference point."),
+            (0, "Aptitude",                "I am open to responsibility and growth, and I am aware of my own strengths and development areas. I accept guidance and supervision constructively, but have not yet demonstrated leadership of others."),
+            (1, "Self-leadership",         "I take ownership of my own work, quality, and deadlines. I act reliably and consistently, seek and apply feedback, and demonstrate accountability for my own outputs and decisions."),
+            (2, "Informal expert leader",  "I support peers through content-based problem-solving and share my expertise proactively. I influence others through professional reasoning and example, not authority."),
+            (3, "Team leader",             "I can lead teams, projects, or workstreams based on subject-matter authority. I guide performance through coaching and resolve conflicts using professional judgment and credibility."),
+            (4, "Organisational leader",   "I can lead multiple teams or major organisational units through professional authority. I shape culture and standards, and I build leadership and expert capability in others."),
+            (5, "Institutional leader",    "I shape organisational identity, purpose, and long-term direction. I act as a moral, cultural, and professional reference point and represent the organisation externally as a trusted authority."),
         ],
     },
     "Transformational": {
-        "hint": "Capability to reshape business models, organisations, and systems over time. Requires at least level 2 across the three technical domains.",
+        "prompt": "How would you estimate your capability to reshape business models, organisations, and systems over time?",
         "anchors": [
-            (0, "Transformational aptitude",      "Basic capacity to cope with change, not yet independent. Understands that change is inherent to organisations; shows openness to learning and adjustment."),
-            (1, "Adaptive professional",          "Can function professionally in a VUCA environment. Operates effectively in changing contexts; adjusts approach as information evolves; maintains performance during transitions."),
-            (2, "Independent change operator",    "Independent professional operating in change. Anticipates change impacts on own environment; helps others navigate uncertainty; integrates multiple perspectives during change."),
-            (3, "Transformation lead",            "Leads transformation initiatives. Designs and leads change initiatives; translates strategy into transition paths; aligns stakeholders; manages systemic interdependencies."),
-            (4, "Strategic transformation leader","Enterprise-level transformation authority. Shapes large-scale transformations; redesigns organisational systems and models; balances stability and change."),
-            (5, "System architect",               "Architect of systemic transformation. Redefines how organisations adapt; creates new transformation paradigms; influences professional or industry thinking."),
+            (0, "Aptitude",                "I understand that change and uncertainty are inherent to organisations. I can function in evolving contexts with guidance, and I am open to learning and adjustment."),
+            (1, "Adaptive professional",   "I can operate effectively in changing, ambiguous contexts. I adjust my approach as information evolves and maintain my performance during transitions."),
+            (2, "Independent change operator", "I can anticipate the impact of change on my own work and immediate environment. I reframe problems as contexts evolve and help others navigate uncertainty."),
+            (3, "Transformation lead",     "I can design and lead change initiatives, translate strategy into transition paths, align stakeholders during transformation, and manage systemic interdependencies."),
+            (4, "Strategic transformation leader", "I can shape large-scale transformations and redesign organisational systems and models. I balance stability and change, and I act as a transformation reference authority."),
+            (5, "System architect",        "I redefine how organisations adapt and evolve. I create new transformation paradigms and influence professional and industry thinking on systemic change."),
         ],
     },
 }
@@ -559,7 +574,7 @@ def page_technical():
 
     keys = ["tc_legal", "tc_data", "tc_strategy", "tc_leadership", "tc_transformational"]
     for key, (domain, meta) in zip(keys, TECH_ANCHORS.items()):
-        anchor_radio(domain, key, meta["hint"], meta["anchors"])
+        anchor_radio(domain, key, meta["prompt"], meta["anchors"])
 
     tc = sum(st.session_state[k] for k in keys) / 5
     st.markdown(f'<div style="margin:4px 0 16px 0;">{score_bar_html(tc)}</div>', unsafe_allow_html=True)
@@ -571,8 +586,8 @@ def page_behavioural():
     page_header("Behavioural Competency",
                 "Interaction complexity, frequency, consequence & conflict · Weight: 12.5%", "Behavioural")
     info_box("The overall BC score uses a <strong>weighted geometric mean</strong> — a very low score on any single dimension significantly reduces the total. This captures that all behavioural capabilities must be sufficiently present.")
-    st.markdown('<div class="card"><div class="card-title">Interaction Complexity — 4 Sub-scores</div>', unsafe_allow_html=True)
-    st.caption("Rule: 2 or more scores of 5 → IC = 5 | 2 or more scores of 4 → IC = 4 | otherwise: rounded average")
+    st.markdown('<h2 class="domain-heading">Interaction Complexity</h2>', unsafe_allow_html=True)
+    st.markdown('<p class="domain-prompt">Score the four sub-dimensions below. Rule: 2 or more scores of 5 → IC = 5 | 2 or more scores of 4 → IC = 4 | otherwise: rounded average.</p>', unsafe_allow_html=True)
     score_slider("Complexity / ambiguity of the client problem", "bc_ic_cp",
         hint="How complex or ambiguous is the core client problem?")
     score_slider("Complexity / ambiguity of the client system", "bc_ic_cs",
@@ -583,12 +598,11 @@ def page_behavioural():
         hint="How complex is the interaction with the broader organization?")
     ic = calc_ic([st.session_state[k] for k in ["bc_ic_cp","bc_ic_cs","bc_ic_team","bc_ic_org"]])
     st.markdown(f'<div class="computed-chip"><span style="color:#94A3B8;">Interaction Complexity (computed):</span> <strong style="color:#E07B39;font-size:16px;">{ic}</strong> / 5</div>', unsafe_allow_html=True)
-    st.markdown('</div>', unsafe_allow_html=True)
-    st.markdown('<div class="card"><div class="card-title">Other Behavioural Dimensions</div>', unsafe_allow_html=True)
+    st.markdown('<h2 class="domain-heading">Other Behavioural Dimensions</h2>', unsafe_allow_html=True)
+    st.markdown('<p class="domain-prompt">Frequency, consequence and conflict are scored separately and combined with Interaction Complexity through a weighted geometric mean.</p>', unsafe_allow_html=True)
     score_slider("Frequency of complex interactions", "bc_freq", hint="Weight: 25% within BC")
     score_slider("Consequence of interaction quality", "bc_cons", hint="Weight: 25% within BC")
     score_slider("Conflict handling and managing resistance", "bc_conf", hint="Weight: 20% within BC")
-    st.markdown('</div>', unsafe_allow_html=True)
     ic_n = ic/5; fr_n = st.session_state["bc_freq"]/5
     co_n = st.session_state["bc_cons"]/5; cf_n = st.session_state["bc_conf"]/5
     bc = round((ic_n**0.3*fr_n**0.25*co_n**0.25*cf_n**0.2)*5,2) if all(v>0 for v in [ic_n,fr_n,co_n,cf_n]) else 0.0
@@ -601,7 +615,8 @@ def page_effort():
     page_header("Effort",
                 "Mental burden (50%) + Emotional burden (50%) · Weight: 12.5%", "Effort")
     info_box("Effort recognizes the <strong>cognitive and emotional demands</strong> of the role. Both mental and emotional effort contribute equally (50% each).")
-    st.markdown('<div class="card"><div class="card-title">Mental Effort</div>', unsafe_allow_html=True)
+    st.markdown('<h2 class="domain-heading">Mental Effort</h2>', unsafe_allow_html=True)
+    st.markdown('<p class="domain-prompt">How cognitively demanding is the role? Score the five sub-dimensions below.</p>', unsafe_allow_html=True)
     score_slider("Concentration and focus required", "ef_conc", hint="Level of sustained attention required (w: 15%)")
     score_slider("Complexity of problem-solving", "ef_prob", hint="How complex are the problems to solve? (w: 25%)")
     score_slider("Amount of information to process and retain", "ef_info", hint="Volume and complexity of information (w: 25%)")
@@ -610,8 +625,8 @@ def page_effort():
     mental = (sum(st.session_state[k] for k in ["ef_conc","ef_prob","ef_info","ef_multi","ef_switch"]) / 5) * 0.5
     st.markdown(f'<div style="margin:4px 0 4px 0;">{score_bar_html(mental, max_score=2.5)}</div>', unsafe_allow_html=True)
     st.caption(f"Mental effort contribution: **{mental:.2f}** (avg × 0.5)")
-    st.markdown('</div>', unsafe_allow_html=True)
-    st.markdown('<div class="card"><div class="card-title">Emotional Effort</div>', unsafe_allow_html=True)
+    st.markdown('<h2 class="domain-heading">Emotional Effort</h2>', unsafe_allow_html=True)
+    st.markdown('<p class="domain-prompt">How emotionally demanding is the role environment? Score the four sub-dimensions below.</p>', unsafe_allow_html=True)
     score_slider("Regulation of own emotions", "ef_own", hint="Managing personal emotional reactions under pressure")
     score_slider("Managing others' emotions", "ef_oth", hint="Handling the emotional states of clients, colleagues, stakeholders")
     score_slider("Dealing with conflict, complaints, distress", "ef_conf", hint="Frequency and intensity of difficult emotional interactions")
@@ -619,7 +634,6 @@ def page_effort():
     emot = (sum(st.session_state[k] for k in ["ef_own","ef_oth","ef_conf","ef_press"]) / 4) * 0.5
     st.markdown(f'<div style="margin:4px 0 4px 0;">{score_bar_html(emot, max_score=2.5)}</div>', unsafe_allow_html=True)
     st.caption(f"Emotional effort contribution: **{emot:.2f}** (avg × 0.5)")
-    st.markdown('</div>', unsafe_allow_html=True)
     effort = mental + emot
     st.markdown(f'<div style="margin:4px 0 16px 0;">{score_bar_html(effort)}</div>', unsafe_allow_html=True)
     st.caption(f"Total Effort score: **{effort:.2f} / 5**")
@@ -630,14 +644,14 @@ def page_professional():
     page_header("Professional Capital",
                 "Trust, credibility and accumulated capital · Weight: 25%", "Professional Capital")
     info_box("Professional Capital is one of the two <strong>highest-weighted dimensions (25%)</strong> because Stratarius is a customer-intimate consultancy where trust and credibility are absolutely core.")
-    st.markdown('<div class="card"><div class="card-title">Three Dimensions of Capital</div>', unsafe_allow_html=True)
+    st.markdown('<h2 class="domain-heading">Three Dimensions of Capital</h2>', unsafe_allow_html=True)
+    st.markdown('<p class="domain-prompt">Professional credibility, relational capital, and organisational capital each carry one third of the weight.</p>', unsafe_allow_html=True)
     score_slider("Professional credibility", "pc_cred",
         hint="Level at which advice is accepted — from emerging credibility to recognised authority (w: 1/3)")
     score_slider("Relational capital", "pc_rel",
         hint="Strength of professional relationships that can be activated for Stratarius (w: 1/3)")
     score_slider("Organizational capital", "pc_org",
         hint="Institutional knowledge, client dependency, key-person continuity value (w: 1/3)")
-    st.markdown('</div>', unsafe_allow_html=True)
     with st.expander("Score anchors"):
         col1, col2 = st.columns(2)
         with col1:
@@ -666,14 +680,14 @@ def page_working():
     page_header("Working Conditions",
                 "Schedule, travel and organizational context · Weight: 12.5%", "Working Conditions")
     info_box("Working conditions recognize the <strong>context</strong> in which the role operates. Higher scores indicate more demanding or less favourable conditions.")
-    st.markdown('<div class="card"><div class="card-title">Three Context Dimensions</div>', unsafe_allow_html=True)
+    st.markdown('<h2 class="domain-heading">Three Context Dimensions</h2>', unsafe_allow_html=True)
+    st.markdown('<p class="domain-prompt">Schedule predictability, travel burden, and the social/organisational environment of the role.</p>', unsafe_allow_html=True)
     score_slider("Schedule demands", "wc_sched",
         hint="Irregular hours, on-call requirements, schedule pressure (w: 33%)")
     score_slider("Travel demands", "wc_travel",
         hint="Frequency, duration and disruption of required travel (w: 33%)")
     score_slider("Social and organizational environment", "wc_social",
         hint="Level of organizational support vs. startup-like self-reliance (w: 33%)")
-    st.markdown('</div>', unsafe_allow_html=True)
     wc = sum(st.session_state[k] for k in ["wc_sched","wc_travel","wc_social"]) / 3
     st.markdown(f'<div style="margin:4px 0 16px 0;">{score_bar_html(wc)}</div>', unsafe_allow_html=True)
     st.caption(f"Working Conditions score: **{wc:.2f} / 5** (arithmetic average)")
@@ -684,7 +698,8 @@ def page_responsibility():
     page_header("Level of Responsibility",
                 "Scope, autonomy, risk and decision complexity · Weight: 25%", "Responsibility")
     info_box("Responsibility is the other highest-weighted dimension (25%) — Stratarius values <strong>accountability</strong> and the ability to own outcomes independently.")
-    st.markdown('<div class="card"><div class="card-title">Four Responsibility Dimensions</div>', unsafe_allow_html=True)
+    st.markdown('<h2 class="domain-heading">Four Responsibility Dimensions</h2>', unsafe_allow_html=True)
+    st.markdown('<p class="domain-prompt">Scope of impact, autonomy, reversibility, and decision complexity each carry equal weight (25%).</p>', unsafe_allow_html=True)
     score_slider("Scope of impact", "resp_scope",
         hint="From individual task accountability to broad organizational or client-wide impact (w: 25%)")
     score_slider("Autonomy and decision-making authority", "resp_auto",
@@ -693,7 +708,6 @@ def page_responsibility():
         hint="Degree to which decisions are hard to reverse or carry significant risk (w: 25%)")
     score_slider("Decision complexity and frequency", "resp_dec",
         hint="How complex and frequent are the decisions the role must take? (w: 25%)")
-    st.markdown('</div>', unsafe_allow_html=True)
     with st.expander("Score anchors"):
         st.markdown("""
 | Score | Description |
