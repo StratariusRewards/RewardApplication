@@ -12,7 +12,6 @@ from openpyxl.utils import get_column_letter
 # PAY STRUCTURE
 # ──────────────────────────────────────────────────────────────────────────────
 PAY_STRUCTURE = {
-    "A5": {"score": 0.5, "salary": 2625.09, "mobility": 780},
     "A6": {"score": 0.6, "salary": 2756.35, "mobility": 780},
     "A7": {"score": 0.7, "salary": 2894.16, "mobility": 780},
     "A8": {"score": 0.8, "salary": 3038.87, "mobility": 780},
@@ -89,10 +88,13 @@ SCORE_KEYS = [
     "resp_scope", "resp_auto", "resp_rev", "resp_dec",
 ]
 
-# Only Technical Competency and Professional Capital allow a score of 0 —
-# every other sub-dimension has a minimum score of 1.
+# Only Technical Competency and Professional Capital allow a score of 0,
+# with one exception: Legal has a floor of 1 because Stratarius is fundamentally
+# a legal advisory firm — at least one technical sub-dimension must therefore
+# score ≥ 1. This guarantees a minimum raw score of 0.650 (→ A6 in the pay
+# structure).
 ZERO_OK_KEYS = {
-    "tc_legal", "tc_data", "tc_strategy", "tc_leadership", "tc_transformational",
+    "tc_data", "tc_strategy", "tc_leadership", "tc_transformational",
     "pc_cred", "pc_rel", "pc_org",
 }
 
@@ -636,7 +638,7 @@ def page_technical():
     page_header("Technical Competency",
                 "Multidisciplinary expertise across five domains · Weight: 12.5% · Equally important as behavioural competency",
                 "Technical")
-    info_box("At Stratarius, <strong>leadership belongs to technical capability</strong> — because leadership without expertise has no legitimacy. Score each domain independently. <strong>When in doubt, select the lower level.</strong>")
+    info_box("At Stratarius, <strong>leadership belongs to technical capability</strong> — because leadership without expertise has no legitimacy. Score each domain independently. The <strong>Legal</strong> domain has a minimum score of 1 since Stratarius is fundamentally a legal advisory firm; the other four domains can score 0. <strong>When in doubt, select the lower level.</strong>")
 
     keys = ["tc_legal", "tc_data", "tc_strategy", "tc_leadership", "tc_transformational"]
     for key, (domain, meta) in zip(keys, TECH_ANCHORS.items()):
@@ -1175,7 +1177,7 @@ The pay level is based on the individual's capabilities *(looking back)* and the
 
 ### Scoring Methods
 
-- **Technical Competency:** Arithmetic average of 5 domains. Scores 0–5; only Technical Competency and Professional Capital allow a 0.
+- **Technical Competency:** Arithmetic average of 5 domains. Scores 0–5, except **Legal** which has a minimum of 1 (Stratarius is fundamentally a legal advisory firm). Only TC and PC allow scores of 0.
 - **Behavioural Competency:** Weighted geometric mean — `(IC^0.3 × Freq^0.25 × Cons^0.25 × Conf^0.2) × 5`. Scores 1–5.
 - **Interaction Complexity rule:** 2+ scores of 5 → IC = 5 | 2+ scores of 4 → IC = 4 | else: rounded average.
 - **Effort:** `AVERAGE(mental subs) × 0.5 + AVERAGE(emotional subs) × 0.5`. Scores 1–5.
