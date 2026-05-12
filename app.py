@@ -200,14 +200,14 @@ html, body, [class*="css"] {
 .page-header-badge {
     display: inline-flex; align-items: center;
     background: #E8F4F1; color: #164A41;
-    font-size: 10px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase;
+    font-size: 11px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase;
     padding: 3px 10px; border-radius: 20px; margin-bottom: 10px;
 }
 .page-title {
-    font-size: 24px !important; font-weight: 700 !important;
+    font-size: 27px !important; font-weight: 700 !important;
     color: #164A41 !important; margin: 0 0 5px 0 !important; letter-spacing: -0.4px;
 }
-.page-subtitle { font-size: 13.5px; color: #64748B; margin: 0; }
+.page-subtitle { font-size: 15px; color: #64748B; margin: 0; }
 
 /* ── Cards ── */
 .card {
@@ -223,8 +223,8 @@ html, body, [class*="css"] {
 /* ── Info panel ── */
 .info-panel {
     background: #EFF7F4; border: 1px solid #B8D8D2; border-left: 4px solid #164A41;
-    border-radius: 0 8px 8px 0; padding: 13px 17px; margin-bottom: 20px;
-    font-size: 13.5px; color: #164A41; line-height: 1.6;
+    border-radius: 0 8px 8px 0; padding: 14px 18px; margin-bottom: 22px;
+    font-size: 15px; color: #164A41; line-height: 1.6;
 }
 
 /* ── Metric cards ── */
@@ -281,20 +281,20 @@ html, body, [class*="css"] {
     border: 1px solid #B8D8D2; font-size: 13.5px; margin: 6px 0 8px 0;
 }
 
-/* ── Domain heading + prompt (used by anchor_radio and slider pages) ── */
+/* ── Domain heading + prompt ── */
 .domain-heading {
-    font-size: 28px !important;
+    font-size: 30px !important;
     font-weight: 700 !important;
     color: #164A41 !important;
-    margin: 28px 0 4px 0 !important;
+    margin: 32px 0 6px 0 !important;
     letter-spacing: -0.3px;
     line-height: 1.2;
 }
 .domain-prompt {
-    font-size: 14px !important;
+    font-size: 15.5px !important;
     color: #64748B !important;
-    margin: 0 0 16px 0 !important;
-    line-height: 1.5;
+    margin: 0 0 18px 0 !important;
+    line-height: 1.55;
 }
 
 /* ── Anchor radio blocks ── */
@@ -325,13 +325,15 @@ div[data-testid="stRadio"] > div > label:has(input:checked) {
     border-color: #164A41 !important;
     border-left: 3px solid #164A41 !important;
 }
-div[data-testid="stRadio"] > div > label p { font-size: 13px !important; color: #334155 !important; line-height: 1.55 !important; margin: 0 !important; }
+div[data-testid="stRadio"] > div > label p { font-size: 14.5px !important; color: #334155 !important; line-height: 1.55 !important; margin: 0 !important; }
 
 /* ── Streamlit widget overrides ── */
-div[data-testid="stSelectSlider"] label { font-size: 13.5px !important; font-weight: 500 !important; color: #334155 !important; }
-.stTextArea textarea { font-size: 13.5px !important; border-color: #D8EBE7 !important; border-radius: 8px !important; }
-.stTextInput input { font-size: 13.5px !important; border-color: #D8EBE7 !important; border-radius: 8px !important; }
-.stDateInput input { font-size: 13.5px !important; border-radius: 8px !important; }
+div[data-testid="stSelectSlider"] label { font-size: 15px !important; font-weight: 500 !important; color: #334155 !important; }
+.stTextArea textarea { font-size: 14.5px !important; border-color: #D8EBE7 !important; border-radius: 8px !important; }
+.stTextInput input { font-size: 14.5px !important; border-color: #D8EBE7 !important; border-radius: 8px !important; }
+.stDateInput input { font-size: 14.5px !important; border-radius: 8px !important; }
+.stCaption, [data-testid="stCaptionContainer"] p { font-size: 14px !important; }
+.sub-dim-hint { font-size: 12.5px !important; }
 
 /* Primary button (main area) */
 .main .stButton > button[kind="primary"] {
@@ -605,139 +607,410 @@ def page_technical():
     st.caption(f"Technical Competency score: **{tc:.2f} / 5** (arithmetic average)")
 
 
+BC_ANCHORS = {
+    "bc_ic_cp": {
+        "domain": "Complexity / ambiguity of the client problem",
+        "prompt": "How would you describe the typical complexity and ambiguity of the client problems you engage with? (Does the role mainly answer questions, or define them?)",
+        "anchors": [
+            (0, "Not exposed",       "In my role I am not directly exposed to client problems; I work on internal tasks, analysis, or preparation only."),
+            (1, "Clearly defined",   "The client problems I work on are clearly defined, scoped, and already translated into concrete questions."),
+            (2, "Mostly defined",    "The client problems I work on are mostly defined; only minor clarification is needed before I can engage."),
+            (3, "Partially defined", "The client problems I work on are partially defined; I need to do meaningful structuring and prioritisation myself."),
+            (4, "Largely unstructured","The client problems I work on are largely unstructured; framing the question is a major part of the work."),
+            (5, "Ill-defined",       "The client problems I work on are ill-defined or emerging; the core question must first be discovered."),
+        ],
+    },
+    "bc_ic_cs": {
+        "domain": "Complexity / ambiguity of the client system",
+        "prompt": "How complex is the client organisation and stakeholder environment you typically operate in? (How hard is it to know who really decides?)",
+        "anchors": [
+            (0, "Not exposed",      "In my role I am not directly exposed to client stakeholder systems."),
+            (1, "Simple structure", "I work with a single decision-maker in a simple structure, with limited internal dynamics."),
+            (2, "Aligned",          "I work with a few stakeholders whose interests are mostly aligned."),
+            (3, "Mixed priorities", "I work with several stakeholders who have different priorities."),
+            (4, "Many stakeholders","I work with many stakeholders across functions or levels of the client organisation."),
+            (5, "Politically complex","I operate in complex client organisations with fragmented ownership, politics, or unclear authority."),
+        ],
+    },
+    "bc_ic_team": {
+        "domain": "Team interaction",
+        "prompt": "How much does your role require you to integrate and coordinate within the project team? (Are you mainly an individual contributor, or a team integrator?)",
+        "anchors": [
+            (0, "Solo",          "My role is fully solo; I have effectively no project-team interaction."),
+            (1, "Independent",   "I work largely independently with only limited coordination."),
+            (2, "Occasional",    "I coordinate occasionally with one or two team members."),
+            (3, "Regular",       "I regularly align and integrate with several team members."),
+            (4, "Active",        "I actively coordinate and synchronise the contributions of team members."),
+            (5, "Main integrator","I act as the main integrator of the team's expertise."),
+        ],
+    },
+    "bc_ic_org": {
+        "domain": "Organisational interaction",
+        "prompt": "How much does your role require you to operate across organisational boundaries and authority lines — business/technical leads, internal governance, firm interface? (Do you follow organisational structures, or connect them?)",
+        "anchors": [
+            (0, "Within team",     "I operate entirely within a single team and do not cross organisational boundaries."),
+            (1, "Single line",     "I operate within one clear organisational line at Stratarius."),
+            (2, "Occasional",      "I occasionally interact across one organisational boundary."),
+            (3, "Regular",         "I regularly work across multiple internal functions or roles."),
+            (4, "Frequent balancing","I frequently balance competing organisational interests."),
+            (5, "Bridge",          "I act as a structural bridge between organisational logics (e.g. business vs. technical, commercial vs. professional)."),
+        ],
+    },
+    "bc_freq": {
+        "domain": "Frequency of interpersonal interaction",
+        "prompt": "What share of your typical working time is spent in interpersonal interaction (internal or external), regardless of how complex that interaction is?",
+        "anchors": [
+            (0, "Negligible","My role involves essentially no interpersonal interaction."),
+            (1, "Rare",      "Interpersonal interaction is incidental (<15% of my time). My work is mostly individual and task-focused."),
+            (2, "Occasional","Interaction is required but not dominant (~15–30% of my time)."),
+            (3, "Regular",   "Interaction is a normal part of my work (~30–50% of my time), with frequent alignment, collaboration, and feedback."),
+            (4, "Predominant","Interaction dominates most of my working time (~50–70%) — discussions, workshops, advisory conversations."),
+            (5, "Continuous","Interaction is the core of my role (>70% of my time). My role exists primarily to interact, influence, align, and communicate."),
+        ],
+    },
+    "bc_cons": {
+        "domain": "Consequence of interpersonal failures",
+        "prompt": "If communication, alignment, or relationship management fails in your role, how serious are the consequences for Stratarius or its clients? (Not about how often failures occur — about risk exposure.)",
+        "anchors": [
+            (0, "No exposure","My role has no meaningful exposure to interpersonal failure risk."),
+            (1, "Negligible", "Failures cause only minor inconvenience and are easily corrected (small rework, minor clarification)."),
+            (2, "Limited",    "Failures cause short delays or local inefficiencies (task rework, limited stakeholder irritation)."),
+            (3, "Noticeable", "Failures have a visible impact on project outcomes or stakeholder confidence (project delays, formal correction needed)."),
+            (4, "Serious",    "Failures materially affect results, relationships, or credibility — management intervention may be required."),
+            (5, "Critical",   "Failures have severe or long-lasting impact on business, reputation, or strategic relationships (loss of client, major reputational damage)."),
+        ],
+    },
+    "bc_conf": {
+        "domain": "Conflict and resistance management",
+        "prompt": "How much does your role structurally require you to deal with disagreement, resistance, opposition, or emotionally charged situations to deliver results? (About the environment, not personal style.)",
+        "anchors": [
+            (0, "None",       "My role does not require dealing with disagreement or resistance."),
+            (1, "Minimal",    "My interactions are mostly cooperative and aligned; resistance is rare."),
+            (2, "Occasional", "Minor disagreements or professional differences of opinion occur but are easily resolved."),
+            (3, "Regular",    "Constructive disagreement and resistance are a normal part of my work (challenging assumptions, negotiating trade-offs)."),
+            (4, "Frequent",   "Strong resistance, emotional reactions, or political tension are common (change resistance, defensive stakeholders, difficult negotiations)."),
+            (5, "Systemic",   "My role operates in an environment where resistance and conflict are persistent and structurally embedded (transformation, power shifts, high-stakes negotiations)."),
+        ],
+    },
+}
+
+EFFORT_ANCHORS = {
+    "ef_conc": {
+        "domain": "Concentration and focus required",
+        "prompt": "How much sustained attention does your role typically require?",
+        "anchors": [
+            (0, "Minimal",        "My role requires only minimal sustained attention."),
+            (1, "Short bursts",   "My role requires short periods of attention; interruptions are harmless."),
+            (2, "Regular focus",  "My role requires regular focus, but frequent breaks are possible."),
+            (3, "Sustained",      "My role requires sustained focus for meaningful periods of time."),
+            (4, "Deep concentration","My role requires long periods of deep concentration."),
+            (5, "Continuous",     "My role requires continuous high-intensity focus with little tolerance for error."),
+        ],
+    },
+    "ef_prob": {
+        "domain": "Complexity of problem-solving",
+        "prompt": "How complex are the problems your role requires you to solve?",
+        "anchors": [
+            (0, "None",            "My role does not require independent problem-solving."),
+            (1, "Routine",         "The problems I solve are routine and rule-based."),
+            (2, "Standard judgment","The problems I solve require standard professional judgment."),
+            (3, "Mixed",           "The problems I solve are of mixed complexity with some ambiguity."),
+            (4, "High complexity", "The problems I solve are highly complex and multi-variable."),
+            (5, "Novel / systemic","The problems I solve are novel, systemic, or ill-defined."),
+        ],
+    },
+    "ef_info": {
+        "domain": "Amount of information to process and retain",
+        "prompt": "How much information does your role require you to process and retain?",
+        "anchors": [
+            (0, "Minimal",   "My role requires processing only minimal information."),
+            (1, "Limited",   "My role involves limited information that is easy to retain."),
+            (2, "Moderate",  "My role involves a moderate volume of information."),
+            (3, "Significant","My role requires me to handle significant information that needs to be structured."),
+            (4, "Large",     "My role requires me to handle large volumes of information across multiple domains."),
+            (5, "Very large","My role requires me to handle very large, dense, and interdependent information sets."),
+        ],
+    },
+    "ef_multi": {
+        "domain": "Multitasking demands",
+        "prompt": "How much does your role require you to manage multiple tasks in parallel?",
+        "anchors": [
+            (0, "None",          "My role is fully sequential; one task at a time."),
+            (1, "Single-task",   "I focus on a single task most of the time."),
+            (2, "Occasional",    "I handle occasional parallel tasks."),
+            (3, "Regular",       "I regularly multitask."),
+            (4, "Frequent",      "I frequently manage multiple tasks simultaneously."),
+            (5, "Continuous",    "I multitask continuously across competing priorities."),
+        ],
+    },
+    "ef_switch": {
+        "domain": "Switching roles and contexts",
+        "prompt": "How often does your role require you to switch between different contexts, roles, or cognitive modes?",
+        "anchors": [
+            (0, "None",       "My role has a single, consistent context."),
+            (1, "Rare",       "I rarely switch between contexts."),
+            (2, "Occasional", "I occasionally switch between contexts."),
+            (3, "Regular",    "I regularly switch between different work contexts."),
+            (4, "Frequent",   "I frequently switch between very different roles or cognitive modes."),
+            (5, "Continuous", "I continuously switch across highly different cognitive modes throughout the day."),
+        ],
+    },
+    "ef_own": {
+        "domain": "Regulating my own emotions",
+        "prompt": "How much does your role environment require you to regulate your own emotions (independent of your personal style)?",
+        "anchors": [
+            (0, "None",       "My role places no demands on emotional self-regulation."),
+            (1, "Rare",       "My emotional neutrality is rarely challenged."),
+            (2, "Occasional", "I occasionally need to remain calm or positive under pressure."),
+            (3, "Regular",    "I regularly need to manage frustration, stress, or disappointment."),
+            (4, "Frequent",   "I frequently need to suppress strong emotions to remain professional."),
+            (5, "Continuous", "My role requires continuous emotional self-regulation under demanding conditions."),
+        ],
+    },
+    "ef_oth": {
+        "domain": "Managing others' emotions",
+        "prompt": "How much does your role require you to manage the emotional states of clients, colleagues, or stakeholders?",
+        "anchors": [
+            (0, "None",        "My role does not involve dealing with others' emotional reactions."),
+            (1, "Rare",        "I rarely deal with others' emotional reactions."),
+            (2, "Occasional",  "I occasionally reassure or support others."),
+            (3, "Regular",     "I regularly help others manage uncertainty or tension."),
+            (4, "Frequent",    "I frequently manage strong emotional reactions from others."),
+            (5, "Continuous",  "I constantly work with anxiety, resistance, or emotional dependency in others."),
+        ],
+    },
+    "ef_conf": {
+        "domain": "Dealing with conflict, complaints, and distress",
+        "prompt": "How frequently and intensely does your role expose you to conflict, complaints, or distressed stakeholders?",
+        "anchors": [
+            (0, "None",       "My role does not involve conflict, complaints, or distress."),
+            (1, "Rare",       "I am rarely exposed to complaints or distress."),
+            (2, "Occasional", "I deal with occasional complaints or mild dissatisfaction."),
+            (3, "Regular",    "I am regularly exposed to conflict or dissatisfaction."),
+            (4, "Frequent",   "I am frequently exposed to serious complaints or distress."),
+            (5, "Continuous", "I am continuously exposed to high emotional tension, conflict, or distress."),
+        ],
+    },
+    "ef_press": {
+        "domain": "Maintaining professional demeanour under pressure",
+        "prompt": "How much sustained pressure does your role place on your ability to maintain a professional demeanour?",
+        "anchors": [
+            (0, "None",       "My role does not involve pressure situations."),
+            (1, "Rare",       "Pressure situations are rare."),
+            (2, "Limited",    "I experience limited pressure with easy recovery."),
+            (3, "Regular",    "I face regular pressure that requires emotional control."),
+            (4, "Frequent",   "I face high-pressure situations frequently."),
+            (5, "Sustained",  "My role involves sustained high pressure with constant emotional restraint required."),
+        ],
+    },
+}
+
+PC_ANCHORS = {
+    "pc_cred": {
+        "domain": "Professional credibility",
+        "prompt": "If you express a professional opinion, how much weight does it naturally carry? (Earned trust in professional judgment.)",
+        "anchors": [
+            (0, "None yet",     "I am a professional starter; my judgment is still being trained and requires proactive input, review, and validation by others."),
+            (1, "Low",          "My credibility is mainly role-based, not person-based; my judgment is not yet trusted independently and is rarely accepted without confirmation."),
+            (2, "Emerging",     "My credibility is developing but still context-dependent; my judgment is trusted in limited or routine situations, but I still need reinforcement by more senior professionals."),
+            (3, "Established",  "My judgment is broadly trusted in relevant contexts; I am recognised as a reliable professional by peers and clients, and my advice is normally accepted without escalation."),
+            (4, "Strong",       "I am widely trusted as a professional authority; my judgment influences decisions beyond my formal responsibility and I am frequently consulted."),
+            (5, "Exceptional",  "I am a reference authority in my field; my judgment shapes thinking, standards, or direction and my credibility extends beyond Stratarius."),
+        ],
+    },
+    "pc_rel": {
+        "domain": "Relational capital (network)",
+        "prompt": "To what extent do you have documented, recurring, and trusted professional relationships that can realistically be activated for Stratarius?",
+        "anchors": [
+            (0, "None",        "I have no owned or trusted professional relationships at all."),
+            (1, "Minimal",     "I have no relationships that can be activated in the Stratarius context and no external professional visibility."),
+            (2, "Limited",     "I have a small number of professional relationships with limited activation potential, and limited or early external visibility."),
+            (3, "Established", "I have several owned professional relationships that can be activated in Stratarius, with clear evidence of repeat stakeholder trust and regular industry participation."),
+            (4, "Strong",      "I have a broad and deep network of trusted professional relationships; stakeholders actively seek me out for advice or continuity."),
+            (5, "Exceptional", "I have an extensive, high-trust professional network that materially influences access and opportunities, with stakeholder loyalty across employers."),
+        ],
+    },
+    "pc_org": {
+        "domain": "Organisational capital (continuity)",
+        "prompt": "To what extent has durable trust, continuity, and relational embeddedness been built between you, Stratarius, and Stratarius' clients? (New joiners — also experienced ones — start at 0.)",
+        "anchors": [
+            (0, "None yet",    "I am a new joiner; internal relationships are still being established and no client continuity has been built through Stratarius."),
+            (1, "Minimal",     "I have a limited internal network and trust, no meaningful client continuity through Stratarius, and limited familiarity with the firm's culture and informal networks."),
+            (2, "Emerging",    "I have basic internal relationships and credibility, limited client continuity within Stratarius, and a growing understanding of collaboration patterns."),
+            (3, "Established", "I have solid internal trust across multiple stakeholders, clear client continuity within Stratarius projects, and good cultural and organisational embeddedness."),
+            (4, "Strong",      "I have deep internal trust and strong relational positioning; clients associate Stratarius continuity with me and I am a stabilising reference point."),
+            (5, "Exceptional", "I am an institutional anchor for Stratarius — long-term client relationships are materially tied to my presence and I bridge trust across generations of clients and colleagues."),
+        ],
+    },
+}
+
+WC_ANCHORS = {
+    "wc_sched": {
+        "domain": "Schedule demands",
+        "prompt": "How predictable and controllable is your typical working schedule?",
+        "anchors": [
+            (0, "Fully predictable",  "My schedule is fully predictable and stable; no unexpected demands."),
+            (1, "Highly predictable", "My schedule is highly predictable with very limited variation."),
+            (2, "Mostly predictable", "My schedule is mostly predictable, with limited peaks."),
+            (3, "Mixed",              "My schedule has mixed predictability — both stable and unpredictable periods."),
+            (4, "Frequently unpredictable","My schedule is frequently unpredictable or involves extended hours."),
+            (5, "Highly disruptive",  "My schedule is highly unpredictable, irregular, or disruptive."),
+        ],
+    },
+    "wc_travel": {
+        "domain": "Travel demands",
+        "prompt": "How much travel does your role typically require? (Frequency, distance, and burden.)",
+        "anchors": [
+            (0, "None",       "My role involves no travel at all."),
+            (1, "Negligible", "My role involves no or negligible travel."),
+            (2, "Occasional", "My role involves occasional local travel."),
+            (3, "Regular",    "My role involves regular regional travel."),
+            (4, "Frequent",   "My role involves frequent national or international travel."),
+            (5, "Continuous", "My role involves continuous or highly demanding travel."),
+        ],
+    },
+    "wc_social": {
+        "domain": "Social and organisational environment",
+        "prompt": "What is the social and organisational climate you work in — pressure, politics, and the level of team support versus self-reliance?",
+        "anchors": [
+            (0, "Highly supportive","My environment is highly supportive with abundant team support and low pressure."),
+            (1, "Stable",          "My environment is stable, supportive, and low-pressure."),
+            (2, "Generally positive","My environment is generally positive."),
+            (3, "Mixed",           "My environment is mixed, with occasional tension."),
+            (4, "Pressured",       "My environment is frequently high-pressure or politically sensitive."),
+            (5, "Structurally pressured","My environment is structurally high-pressure and conflict-prone."),
+        ],
+    },
+}
+
+RESP_ANCHORS = {
+    "resp_scope": {
+        "domain": "Scope of impact",
+        "prompt": "If your role consistently made poor decisions, how far would the damage realistically spread? (Breadth and significance of outcomes affected — not authority.)",
+        "anchors": [
+            (0, "None",            "My role has no decision impact beyond my own day-to-day execution."),
+            (1, "Local",           "My impact is limited to individual tasks or small deliverables."),
+            (2, "Team-level",      "My impact affects a small team or project component."),
+            (3, "Project / function","My impact affects entire projects, major workstreams, or a defined function."),
+            (4, "Organisational / client","My impact materially affects Stratarius performance or client outcomes."),
+            (5, "Strategic",       "My impact affects long-term strategy, positioning, or sustainability."),
+        ],
+    },
+    "resp_auto": {
+        "domain": "Autonomy and decision-making authority",
+        "prompt": "To what extent does your role independently make decisions and commit Stratarius, clients, or projects without requiring approval? (About who decides, not the complexity of the decision.)",
+        "anchors": [
+            (0, "None",     "I have no decision-making role; I execute instructions only."),
+            (1, "Prescribed","My decisions are fully prescribed or approved by others; I have no independent decision power."),
+            (2, "Limited",  "I make minor operational decisions within clear boundaries; they are local, reversible, and often reviewed."),
+            (3, "Moderate", "I independently make professional decisions within a defined scope and am trusted to decide in my own domain without routine approval."),
+            (4, "High",     "I make significant decisions affecting projects, clients, or teams; approvals are the exception, not the norm."),
+            (5, "Full",     "I have authority to commit Stratarius or client direction; I shape outcomes through independent decisions."),
+        ],
+    },
+    "resp_rev": {
+        "domain": "Reversibility and risk",
+        "prompt": "If your role makes a wrong decision, how easy is it to undo — and how bad is the damage if it cannot be undone?",
+        "anchors": [
+            (0, "No risk",         "My decisions carry no meaningful risk and are trivial to reverse."),
+            (1, "Fully reversible","My decisions are easily corrected with little or no negative impact."),
+            (2, "Mostly reversible","My decisions may cause inconvenience or delay but are still correctable."),
+            (3, "Partially reversible","Some of my decisions have lasting consequences, though mitigation is possible."),
+            (4, "Largely irreversible","Many of my decisions have serious and lasting consequences; errors may damage client trust, financial outcomes, or reputation."),
+            (5, "Irreversible",    "My decisions have long-term or permanent strategic, financial, or reputational impact; mistakes can materially harm Stratarius' future positioning."),
+        ],
+    },
+    "resp_dec": {
+        "domain": "Decision complexity and frequency",
+        "prompt": "How frequent and complex are the decisions your role requires you to take? (Viewed from the organisation's perspective, not personal mental effort.)",
+        "anchors": [
+            (0, "None",             "My role does not involve material decision-making."),
+            (1, "Rare and simple",  "Decisions are infrequent and straightforward, following clear rules."),
+            (2, "Occasional",       "Decisions are occasional and of low complexity, with limited variables."),
+            (3, "Regular and moderate","Decisions are a normal part of my role and involve multiple considerations."),
+            (4, "Frequent and complex","Decisions are frequent and involve high ambiguity or multiple stakeholders."),
+            (5, "Continuous and complex","Decision-making is constant and highly complex — ambiguous, multi-variable, high-impact decisions."),
+        ],
+    },
+}
+
+
+def _render_anchor_block(key, dct):
+    meta = dct[key]
+    anchor_radio(meta["domain"], key, meta["prompt"], meta["anchors"])
+
+
 def page_behavioural():
     page_header("Behavioural Competency",
-                "Interaction complexity, frequency, consequence & conflict · Weight: 12.5%", "Behavioural")
-    info_box("The overall BC score uses a <strong>weighted geometric mean</strong> — a very low score on any single dimension significantly reduces the total. This captures that all behavioural capabilities must be sufficiently present.")
-    st.markdown('<h2 class="domain-heading">Interaction Complexity</h2>', unsafe_allow_html=True)
-    st.markdown('<p class="domain-prompt">Score the four sub-dimensions below. Rule: 2 or more scores of 5 → IC = 5 | 2 or more scores of 4 → IC = 4 | otherwise: rounded average.</p>', unsafe_allow_html=True)
-    score_slider("Complexity / ambiguity of the client problem", "bc_ic_cp",
-        hint="How complex or ambiguous is the core client problem?")
-    score_slider("Complexity / ambiguity of the client system", "bc_ic_cs",
-        hint="How complex is the stakeholder system? (number of stakeholders, politics, etc.)")
-    score_slider("Team interaction", "bc_ic_team",
-        hint="How complex is the required team collaboration?")
-    score_slider("Organizational interaction", "bc_ic_org",
-        hint="How complex is the interaction with the broader organization?")
+                "Interaction complexity, frequency, consequence & conflict · Weight: 12.5% · Equally important as technical competency",
+                "Behavioural")
+    info_box("The overall BC score uses a <strong>weighted geometric mean</strong> — a very low score on any single dimension significantly reduces the total. <strong>When in doubt, select the lower level.</strong>")
+    for key in ["bc_ic_cp", "bc_ic_cs", "bc_ic_team", "bc_ic_org"]:
+        _render_anchor_block(key, BC_ANCHORS)
     ic = calc_ic([st.session_state[k] for k in ["bc_ic_cp","bc_ic_cs","bc_ic_team","bc_ic_org"]])
-    st.markdown(f'<div class="computed-chip"><span style="color:#94A3B8;">Interaction Complexity (computed):</span> <strong style="color:#E07B39;font-size:16px;">{ic}</strong> / 5</div>', unsafe_allow_html=True)
-    st.markdown('<h2 class="domain-heading">Other Behavioural Dimensions</h2>', unsafe_allow_html=True)
-    st.markdown('<p class="domain-prompt">Frequency, consequence and conflict are scored separately and combined with Interaction Complexity through a weighted geometric mean.</p>', unsafe_allow_html=True)
-    score_slider("Frequency of complex interactions", "bc_freq", hint="Weight: 25% within BC")
-    score_slider("Consequence of interaction quality", "bc_cons", hint="Weight: 25% within BC")
-    score_slider("Conflict handling and managing resistance", "bc_conf", hint="Weight: 20% within BC")
+    st.markdown(f'<div class="computed-chip"><span style="color:#94A3B8;">Interaction Complexity (computed):</span> <strong style="color:#E07B39;font-size:17px;">{ic}</strong> / 5  <span style="color:#94A3B8;font-size:12px;">— ceiling rule: 2 or more 5s → 5; 2 or more 4s → 4; otherwise rounded average</span></div>', unsafe_allow_html=True)
+    for key in ["bc_freq", "bc_cons", "bc_conf"]:
+        _render_anchor_block(key, BC_ANCHORS)
     ic_n = ic/5; fr_n = st.session_state["bc_freq"]/5
     co_n = st.session_state["bc_cons"]/5; cf_n = st.session_state["bc_conf"]/5
     bc = round((ic_n**0.3*fr_n**0.25*co_n**0.25*cf_n**0.2)*5,2) if all(v>0 for v in [ic_n,fr_n,co_n,cf_n]) else 0.0
-    st.markdown(f'<div style="margin:4px 0 16px 0;">{score_bar_html(bc)}</div>', unsafe_allow_html=True)
-    st.caption(f"Behavioural Competency score: **{bc:.2f} / 5** (geometric mean × 5)")
+    st.markdown(f'<div style="margin:18px 0 16px 0;">{score_bar_html(bc)}</div>', unsafe_allow_html=True)
+    st.caption(f"Behavioural Competency score: **{bc:.2f} / 5** (weighted geometric mean × 5)")
 
 
 def page_effort():
     page_header("Effort",
-                "Mental burden (50%) + Emotional burden (50%) · Weight: 12.5%", "Effort")
-    info_box("Effort recognizes the <strong>cognitive and emotional demands</strong> of the role. Both mental and emotional effort contribute equally (50% each).")
-    st.markdown('<h2 class="domain-heading">Mental Effort</h2>', unsafe_allow_html=True)
-    st.markdown('<p class="domain-prompt">How cognitively demanding is the role? Score the five sub-dimensions below.</p>', unsafe_allow_html=True)
-    score_slider("Concentration and focus required", "ef_conc", hint="Level of sustained attention required (w: 15%)")
-    score_slider("Complexity of problem-solving", "ef_prob", hint="How complex are the problems to solve? (w: 25%)")
-    score_slider("Amount of information to process and retain", "ef_info", hint="Volume and complexity of information (w: 25%)")
-    score_slider("Multitasking demands", "ef_multi", hint="Simultaneous task management requirements (w: 15%)")
-    score_slider("Switching roles", "ef_switch", hint="Frequency of switching between different modes or roles (w: 20%)")
+                "Mental burden (50%) + Emotional burden (50%) · Weight: 12.5%",
+                "Effort")
+    info_box("Effort recognises the <strong>cognitive and emotional demands</strong> of the role. Mental and emotional effort contribute equally (50% each). <strong>When in doubt, select the lower level.</strong>")
+    for key in ["ef_conc", "ef_prob", "ef_info", "ef_multi", "ef_switch"]:
+        _render_anchor_block(key, EFFORT_ANCHORS)
     mental = (sum(st.session_state[k] for k in ["ef_conc","ef_prob","ef_info","ef_multi","ef_switch"]) / 5) * 0.5
-    st.markdown(f'<div style="margin:4px 0 4px 0;">{score_bar_html(mental, max_score=2.5)}</div>', unsafe_allow_html=True)
+    st.markdown(f'<div style="margin:14px 0 4px 0;">{score_bar_html(mental, max_score=2.5)}</div>', unsafe_allow_html=True)
     st.caption(f"Mental effort contribution: **{mental:.2f}** (avg × 0.5)")
-    st.markdown('<h2 class="domain-heading">Emotional Effort</h2>', unsafe_allow_html=True)
-    st.markdown('<p class="domain-prompt">How emotionally demanding is the role environment? Score the four sub-dimensions below.</p>', unsafe_allow_html=True)
-    score_slider("Regulation of own emotions", "ef_own", hint="Managing personal emotional reactions under pressure")
-    score_slider("Managing others' emotions", "ef_oth", hint="Handling the emotional states of clients, colleagues, stakeholders")
-    score_slider("Dealing with conflict, complaints, distress", "ef_conf", hint="Frequency and intensity of difficult emotional interactions")
-    score_slider("Maintaining professional demeanor under pressure", "ef_press", hint="Composure in high-stakes or high-pressure situations")
+    for key in ["ef_own", "ef_oth", "ef_conf", "ef_press"]:
+        _render_anchor_block(key, EFFORT_ANCHORS)
     emot = (sum(st.session_state[k] for k in ["ef_own","ef_oth","ef_conf","ef_press"]) / 4) * 0.5
-    st.markdown(f'<div style="margin:4px 0 4px 0;">{score_bar_html(emot, max_score=2.5)}</div>', unsafe_allow_html=True)
+    st.markdown(f'<div style="margin:14px 0 4px 0;">{score_bar_html(emot, max_score=2.5)}</div>', unsafe_allow_html=True)
     st.caption(f"Emotional effort contribution: **{emot:.2f}** (avg × 0.5)")
     effort = mental + emot
-    st.markdown(f'<div style="margin:4px 0 16px 0;">{score_bar_html(effort)}</div>', unsafe_allow_html=True)
+    st.markdown(f'<div style="margin:14px 0 16px 0;">{score_bar_html(effort)}</div>', unsafe_allow_html=True)
     st.caption(f"Total Effort score: **{effort:.2f} / 5**")
 
 
 def page_professional():
     page_header("Professional Capital",
-                "Trust, credibility and accumulated capital · Weight: 25%", "Professional Capital")
-    info_box("Professional Capital is one of the two <strong>highest-weighted dimensions (25%)</strong> because Stratarius is a customer-intimate consultancy where trust and credibility are absolutely core.")
-    st.markdown('<h2 class="domain-heading">Three Dimensions of Capital</h2>', unsafe_allow_html=True)
-    st.markdown('<p class="domain-prompt">Professional credibility, relational capital, and organisational capital each carry one third of the weight.</p>', unsafe_allow_html=True)
-    score_slider("Professional credibility", "pc_cred",
-        hint="Level at which advice is accepted — from emerging credibility to recognised authority (w: 1/3)")
-    score_slider("Relational capital", "pc_rel",
-        hint="Strength of professional relationships that can be activated for Stratarius (w: 1/3)")
-    score_slider("Organizational capital", "pc_org",
-        hint="Institutional knowledge, client dependency, key-person continuity value (w: 1/3)")
-    with st.expander("Score anchors"):
-        col1, col2 = st.columns(2)
-        with col1:
-            st.markdown("""**Professional Credibility**
-| Score | Meaning |
-|--|--|
-| 1–2 | Advice needs validation or escalation |
-| 3 | Generally accepted, occasional escalation |
-| 4 | Normally accepted without escalation |
-| 5 | Authority — rarely challenged |""")
-        with col2:
-            st.markdown("""**Organizational Capital**
-| Score | Meaning |
-|--|--|
-| 0–1 | No continuity accumulated yet |
-| 2–3 | Some institutional knowledge |
-| 4 | High know-how, key relationships |
-| 5 | Critical continuity, high key-person value |""")
+                "Trust, credibility and accumulated capital · Weight: 25% · One of the two highest-weighted dimensions",
+                "Professional Capital")
+    info_box("Professional Capital is one of the two <strong>highest-weighted dimensions (25%)</strong> because Stratarius is a customer-intimate consultancy where trust and credibility are absolutely core. <strong>When in doubt, select the lower level.</strong>")
+    for key in ["pc_cred", "pc_rel", "pc_org"]:
+        _render_anchor_block(key, PC_ANCHORS)
     pc = sum(st.session_state[k] for k in ["pc_cred","pc_rel","pc_org"]) / 3
-    st.markdown(f'<div style="margin:4px 0 16px 0;">{score_bar_html(pc)}</div>', unsafe_allow_html=True)
+    st.markdown(f'<div style="margin:18px 0 16px 0;">{score_bar_html(pc)}</div>', unsafe_allow_html=True)
     st.caption(f"Professional Capital score: **{pc:.2f} / 5** (arithmetic average)")
 
 
 def page_working():
     page_header("Working Conditions",
-                "Schedule, travel and organizational context · Weight: 12.5%", "Working Conditions")
-    info_box("Working conditions recognize the <strong>context</strong> in which the role operates. Higher scores indicate more demanding or less favourable conditions.")
-    st.markdown('<h2 class="domain-heading">Three Context Dimensions</h2>', unsafe_allow_html=True)
-    st.markdown('<p class="domain-prompt">Schedule predictability, travel burden, and the social/organisational environment of the role.</p>', unsafe_allow_html=True)
-    score_slider("Schedule demands", "wc_sched",
-        hint="Irregular hours, on-call requirements, schedule pressure (w: 33%)")
-    score_slider("Travel demands", "wc_travel",
-        hint="Frequency, duration and disruption of required travel (w: 33%)")
-    score_slider("Social and organizational environment", "wc_social",
-        hint="Level of organizational support vs. startup-like self-reliance (w: 33%)")
+                "Schedule, travel and social environment · Weight: 12.5%",
+                "Working Conditions")
+    info_box("Working conditions recognise the <strong>context</strong> in which the role operates. Higher scores indicate more demanding or less favourable conditions. <strong>When in doubt, select the lower level.</strong>")
+    for key in ["wc_sched", "wc_travel", "wc_social"]:
+        _render_anchor_block(key, WC_ANCHORS)
     wc = sum(st.session_state[k] for k in ["wc_sched","wc_travel","wc_social"]) / 3
-    st.markdown(f'<div style="margin:4px 0 16px 0;">{score_bar_html(wc)}</div>', unsafe_allow_html=True)
+    st.markdown(f'<div style="margin:18px 0 16px 0;">{score_bar_html(wc)}</div>', unsafe_allow_html=True)
     st.caption(f"Working Conditions score: **{wc:.2f} / 5** (arithmetic average)")
 
 
 def page_responsibility():
     page_header("Level of Responsibility",
-                "Scope, autonomy, risk and decision complexity · Weight: 25%", "Responsibility")
-    info_box("Responsibility is the other highest-weighted dimension (25%) — Stratarius values <strong>accountability</strong> and the ability to own outcomes independently.")
-    st.markdown('<h2 class="domain-heading">Four Responsibility Dimensions</h2>', unsafe_allow_html=True)
-    st.markdown('<p class="domain-prompt">Scope of impact, autonomy, reversibility, and decision complexity each carry equal weight (25%).</p>', unsafe_allow_html=True)
-    score_slider("Scope of impact", "resp_scope",
-        hint="From individual task accountability to broad organizational or client-wide impact (w: 25%)")
-    score_slider("Autonomy and decision-making authority", "resp_auto",
-        hint="From guided execution within defined boundaries to full strategic autonomy (w: 25%)")
-    score_slider("Reversibility and risk", "resp_rev",
-        hint="Degree to which decisions are hard to reverse or carry significant risk (w: 25%)")
-    score_slider("Decision complexity and frequency", "resp_dec",
-        hint="How complex and frequent are the decisions the role must take? (w: 25%)")
-    with st.expander("Score anchors"):
-        st.markdown("""
-| Score | Description |
-|--|--|
-| **1** | Own tasks only; guided execution; escalates regularly |
-| **2** | Accountable for analyses and deliverables; exercises judgment within defined bounds |
-| **3** | Accountable for project outcomes; autonomous decisions on client work |
-| **4** | Client-level and organizational impact; owns project outcomes |
-| **5** | Full strategic ownership; shapes direction; decisions rarely reversed |""")
+                "Scope, autonomy, risk and decision complexity · Weight: 25% · One of the two highest-weighted dimensions",
+                "Responsibility")
+    info_box("Responsibility is the other highest-weighted dimension (25%) — Stratarius values <strong>accountability</strong> and the ability to own outcomes independently. <strong>When in doubt, select the lower level.</strong>")
+    for key in ["resp_scope", "resp_auto", "resp_rev", "resp_dec"]:
+        _render_anchor_block(key, RESP_ANCHORS)
     resp = sum(st.session_state[k] for k in ["resp_scope","resp_auto","resp_rev","resp_dec"]) / 4
-    st.markdown(f'<div style="margin:4px 0 16px 0;">{score_bar_html(resp)}</div>', unsafe_allow_html=True)
+    st.markdown(f'<div style="margin:18px 0 16px 0;">{score_bar_html(resp)}</div>', unsafe_allow_html=True)
     st.caption(f"Responsibility score: **{resp:.2f} / 5** (arithmetic average)")
 
 
