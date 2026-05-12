@@ -2,6 +2,8 @@ import streamlit as st
 import pandas as pd
 import io
 import math
+import base64
+from pathlib import Path
 from openpyxl import Workbook
 from openpyxl.styles import Font, PatternFill, Alignment, Border, Side
 from openpyxl.utils import get_column_letter
@@ -141,19 +143,21 @@ html, body, [class*="css"] {
 [data-testid="stSidebarContent"] { padding: 0 !important; }
 
 .sidebar-logo {
-    background: #164A41;
+    background: #FFFFFF;
     padding: 22px 20px 18px 20px;
     border-bottom: 1px solid #D8EBE7;
     margin-bottom: 6px;
+    text-align: left;
 }
-.sidebar-logo img { height: 34px; filter: brightness(0) invert(1); }
+.sidebar-logo img { height: 36px; display: block; }
 .sidebar-brand {
-    color: rgba(255,255,255,0.65) !important;
+    color: #4A7A70 !important;
     font-size: 11px;
     font-weight: 600;
     letter-spacing: 0.1em;
     text-transform: uppercase;
-    margin-top: 10px;
+    margin-top: 12px;
+    text-align: left;
 }
 
 /* Nav buttons */
@@ -162,14 +166,21 @@ html, body, [class*="css"] {
     border: none !important;
     border-radius: 7px !important;
     color: #4A7A70 !important;
-    font-size: 13px !important;
+    font-size: 13.5px !important;
     font-weight: 500 !important;
     text-align: left !important;
+    justify-content: flex-start !important;
     padding: 9px 14px !important;
     width: 100% !important;
     transition: background 0.15s, color 0.15s !important;
     box-shadow: none !important;
 }
+[data-testid="stSidebar"] .stButton > button > div,
+[data-testid="stSidebar"] .stButton > button p {
+    text-align: left !important;
+    width: 100% !important;
+}
+.score-preview, .score-preview-label, .score-big, .score-level, .score-salary { text-align: left !important; }
 [data-testid="stSidebar"] .stButton > button:hover {
     background: #EFF7F4 !important;
     color: #164A41 !important;
@@ -540,22 +551,27 @@ def page_job_info():
     info_box("""<strong>How to use this tool</strong><br>
 Score each sub-dimension from <strong>0 to 5</strong>. Scores are saved as you go — navigate freely between
 pages and your inputs will be retained. The <strong>Results page</strong> shows the final weighted score,
-recommended pay level, and full compensation package, with an Excel export.""")
+the pay level, and the full compensation package, with an Excel export.""")
 
-    st.markdown("""<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:4px;">
-  <div style="background:#F5FAF8;border:1px solid #D8EBE7;border-radius:10px;padding:14px 16px;">
-    <div style="font-size:11px;font-weight:700;letter-spacing:0.07em;text-transform:uppercase;color:#164A41;">Competency</div>
-    <div style="font-size:11px;color:#94A3B8;margin-top:3px;">Technical + Behavioural · 25% weight</div>
-  </div>
-  <div style="background:#F5FAF8;border:1px solid #D8EBE7;border-radius:10px;padding:14px 16px;">
-    <div style="font-size:11px;font-weight:700;letter-spacing:0.07em;text-transform:uppercase;color:#164A41;">Capital & Responsibility</div>
-    <div style="font-size:11px;color:#94A3B8;margin-top:3px;">Professional Capital + Responsibility · 50% weight</div>
-  </div>
-  <div style="background:#F5FAF8;border:1px solid #D8EBE7;border-radius:10px;padding:14px 16px;">
-    <div style="font-size:11px;font-weight:700;letter-spacing:0.07em;text-transform:uppercase;color:#164A41;">Effort & Context</div>
-    <div style="font-size:11px;color:#94A3B8;margin-top:3px;">Effort + Working Conditions · 25% weight</div>
-  </div>
-</div>""", unsafe_allow_html=True)
+    dims = [
+        ("Competency",           "Technical + Behavioural", "25%"),
+        ("Professional Capital", "Trust and credibility",   "25%"),
+        ("Responsibility",       "Accountability",          "25%"),
+        ("Effort",               "Mental + Emotional",      "12.5%"),
+        ("Working Conditions",   "Role context",            "12.5%"),
+    ]
+    cards = "".join(
+        f"""<div style="background:#F5FAF8;border:1px solid #D8EBE7;border-radius:10px;padding:14px 16px;">
+  <div style="font-size:11px;font-weight:700;letter-spacing:0.07em;text-transform:uppercase;color:#164A41;">{name}</div>
+  <div style="font-size:11px;color:#94A3B8;margin-top:3px;">{sub}</div>
+  <div style="font-size:18px;font-weight:700;color:#164A41;margin-top:8px;">{wt}</div>
+</div>"""
+        for name, sub, wt in dims
+    )
+    st.markdown(
+        f'<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-top:4px;">{cards}</div>',
+        unsafe_allow_html=True,
+    )
 
 
 TECH_ANCHORS = {
@@ -1040,7 +1056,7 @@ def page_responsibility():
 
 def page_results():
     page_header("Results & Pay Proposal",
-                "Final score, recommended pay level and full compensation package", "Results")
+                "Final score, pay level and full compensation package", "Results")
     sc = calculate_scores()
     cat = lookup_level(sc["final"])
     pay = PAY_STRUCTURE[cat]
@@ -1141,7 +1157,7 @@ def page_info():
 
 ### Governance
 
-The pay level is based on the individual's capabilities *(looking back)* and the job demands *(looking forward)*. The process is **fully transparent** and the subject of an open discussion. The pay level is the outcome of a **principled negotiation** — non-negotiable on outcome, but the principles are subject to dialogue.
+The pay level is based on the individual's capabilities *(looking back)* and the job demands *(looking forward)*. The process is **fully transparent** and the subject of an open discussion. How the dimensions and subdimensions are scored to determine the value of the work is subject to dialogue. The outcome of the applied principles and the corresponding pay level, however, are non-negotiable.
 """)
 
     with tab2:
@@ -1286,6 +1302,13 @@ def export_excel(sc):
 # ──────────────────────────────────────────────────────────────────────────────
 # SIDEBAR
 # ──────────────────────────────────────────────────────────────────────────────
+def _logo_data_url():
+    """Read assets/stratarius-logo.png at runtime and embed as a data URL."""
+    p = Path(__file__).with_name("assets") / "stratarius-logo.png"
+    if not p.exists():
+        return None
+    return f"data:image/png;base64,{base64.b64encode(p.read_bytes()).decode()}"
+
 def render_sidebar():
     sc = calculate_scores()
     cat = lookup_level(sc["final"])
@@ -1294,9 +1317,10 @@ def render_sidebar():
     current = st.session_state.get("_page", "job_info")
 
     with st.sidebar:
+        logo_src = _logo_data_url()
+        logo_img = f'<img src="{logo_src}" alt="Stratarius">' if logo_src else '<div style="font-size:22px;font-weight:700;color:#164A41;">Stratarius</div>'
         st.markdown(f"""<div class="sidebar-logo">
-  <img src="https://cdn.prod.website-files.com/673dbfdf2f3d713ccf63b52c/6751dac6302746797e66f059_Artboard%201.webp"
-       onerror="this.style.display='none'" alt="Stratarius">
+  {logo_img}
   <div class="sidebar-brand">Job Architecture Tool</div>
 </div>""", unsafe_allow_html=True)
 
