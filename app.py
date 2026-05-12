@@ -348,15 +348,35 @@ def info_box(text):
     st.markdown(f'<div class="info-panel">{text}</div>', unsafe_allow_html=True)
 
 def score_slider(label, key, hint=None):
-    """Render a select_slider. Value persists via key in session_state — no value= arg."""
+    """Persist scores across page navigation.
+
+    Streamlit deletes widget keys (key=) from session_state when the widget is
+    not rendered. To survive navigation, we separate:
+      - storage key  (e.g. "tc_legal")  — set by init_state(), never a widget key
+      - widget key   (e.g. "_w_tc_legal") — used only for the slider DOM element
+
+    On every render we (re)initialise the widget key from the storage key if it
+    was cleared, render the slider, then write the result back to the storage key.
+    """
+    wkey = f"_w_{key}"
+    if wkey not in st.session_state:
+        st.session_state[wkey] = st.session_state.get(key, 2)
     if hint:
         st.markdown(f'<div class="sub-dim-hint">{hint}</div>', unsafe_allow_html=True)
-    return st.select_slider(label, options=list(range(6)),
-                            format_func=lambda x: SCORE_LABELS[x], key=key)
+    val = st.select_slider(label, options=list(range(6)),
+                           format_func=lambda x: SCORE_LABELS[x], key=wkey)
+    st.session_state[key] = val   # write back to persistent storage key
+    return val
 
 def comment_box(key, placeholder="Add comments, justification or context…"):
+    """Same separation: _wc_ widget key, persistent storage key."""
+    wkey = f"_wc_{key}"
+    if wkey not in st.session_state:
+        st.session_state[wkey] = st.session_state.get(key, "")
     st.markdown('<div class="comment-header">Comments</div>', unsafe_allow_html=True)
-    st.text_area("", key=key, height=90, placeholder=placeholder, label_visibility="collapsed")
+    val = st.text_area("", key=wkey, height=90, placeholder=placeholder,
+                       label_visibility="collapsed")
+    st.session_state[key] = val
 
 def score_bar_html(score, max_score=5):
     pct = max(0, min(100, score / max_score * 100))
@@ -381,19 +401,36 @@ def dimension_row(name, score, weight_label):
 # ──────────────────────────────────────────────────────────────────────────────
 # PAGES
 # ──────────────────────────────────────────────────────────────────────────────
+def _text(label, key, **kwargs):
+    """Text input with persistent storage key (separate from widget key)."""
+    wkey = f"_wi_{key}"
+    if wkey not in st.session_state:
+        st.session_state[wkey] = st.session_state.get(key, "")
+    val = st.text_input(label, key=wkey, **kwargs)
+    st.session_state[key] = val
+    return val
+
+def _textarea(label, key, **kwargs):
+    wkey = f"_wt_{key}"
+    if wkey not in st.session_state:
+        st.session_state[wkey] = st.session_state.get(key, "")
+    val = st.text_area(label, key=wkey, **kwargs)
+    st.session_state[key] = val
+    return val
+
 def page_job_info():
     page_header("Job Information", "Basic details about the role being evaluated.", "New Evaluation")
     st.markdown('<div class="card"><div class="card-title">Role Details</div>', unsafe_allow_html=True)
     col1, col2 = st.columns(2)
     with col1:
-        st.text_input("Candidate / Role Name", key="job_name")
-        st.text_input("Job Title", key="job_title")
-        st.text_input("Department / Team", key="department")
+        _text("Candidate / Role Name", "job_name")
+        _text("Job Title", "job_title")
+        _text("Department / Team", "department")
     with col2:
-        st.text_input("Evaluator", key="evaluator")
+        _text("Evaluator", "evaluator")
         st.date_input("Evaluation Date", key="eval_date")
-        st.text_area("General Notes", key="job_notes", height=70,
-                     placeholder="Any context or notes for this evaluation…")
+        _textarea("General Notes", "job_notes", height=70,
+                  placeholder="Any context or notes for this evaluation…")
     st.markdown('</div>', unsafe_allow_html=True)
 
     info_box("""<strong>How to use this tool</strong><br>
