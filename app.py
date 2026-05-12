@@ -454,6 +454,49 @@ recommended pay level, and full compensation package, with an Excel export.""")
 </div>""", unsafe_allow_html=True)
 
 
+TECH_ANCHORS = {
+    "Legal": [
+        (0, "Aptitude",             "Strong analytical and legal reasoning potential; understands core legal logic conceptually; can follow and discuss legal reasoning but cannot yet apply it professionally."),
+        (1, "Legal foundation",     "Understands core legal principles (employment, reward, governance, labour, social security, tax law); interprets standard legal positions with guidance; recognises legal implications in business and HR situations."),
+        (2, "Independent legal professional", "Independently analyses legal questions in business and HR contexts; translates law into business-relevant advice; identifies legal risk in reward, employment, and organisational design; advises on standard scenarios without supervision."),
+        (3, "Advanced legal specialist",      "Handles complex, multi-dimensional legal questions independently; integrates law with reward strategy, organisational design, and governance; designs legally robust solutions; anticipates legal consequences of strategic choices."),
+        (4, "Legal authority",      "Defines legal positions in complex, sensitive, or high-impact contexts; shapes legal governance and reward-legal frameworks; advises senior leadership; resolves novel legal-business dilemmas; acts as reference authority within the practice."),
+        (5, "Legal architect / thought leader", "Develops new legal-strategic methodologies or models; shapes how law is applied to reward strategy and people governance; influences professional or industry thinking; integrates law with economics, data, and organisational theory."),
+    ],
+    "Data": [
+        (0, "Aptitude",             "Strong quantitative and analytical aptitude; understands basic data, mathematical, and logical concepts; can follow computational reasoning but cannot yet apply it professionally."),
+        (1, "Foundational",         "Performs basic calculations; uses simple formulas; translates some business logic into Excel (or other tools); follows predefined models. Computation is mechanical and guided."),
+        (2, "Independent professional", "Builds structured calculation models; performs multi-step computations; checks consistency and logic; applies quantitative reasoning independently. Typical tools: Excel, basic BI, basic scripting."),
+        (3, "Advanced professional","Designs complex computational models; integrates multiple datasets; handles assumptions, sensitivities, and scenarios; combines computation with analytical judgment. Typical tools: advanced Excel, Power Query, Power Pivot, SQL."),
+        (4, "Expert",               "Designs data and computation architectures; chooses optimal computational methods; handles statistical, financial, or algorithmic complexity; validates and challenges models conceptually. Typical tools: Python, R, SQL, BI, advanced modelling."),
+        (5, "Reference authority",  "Designs or defines advanced computational and analytical methodologies; masters statistical, algorithmic, or quantitative modelling frameworks; influences how data analysis is done, not just how it is applied; operates beyond tool-level expertise."),
+    ],
+    "Strategy": [
+        (0, "Aptitude",             "Demonstrates curiosity about how organisations create value; understands basic business logic and cause–effect relationships; can follow strategic reasoning but does not yet apply it independently."),
+        (1, "Strategy foundation",  "Understands basic strategy concepts, frameworks, and terminology; applies standard tools under guidance; collects and structures information for strategic analysis; communicates strategic concepts clearly."),
+        (2, "Independent strategy professional", "Conducts structured strategic analyses independently; applies multiple frameworks appropriately; formulates coherent problem statements and hypotheses; synthesises insights from qualitative and quantitative sources; supports decision-making with well-reasoned recommendations."),
+        (3, "Advanced strategy specialist",      "Designs strategic analyses tailored to complex contexts; challenges assumptions and reframes strategic problems; evaluates strategic options with clear trade-off logic; integrates market, organisational, financial, and human factors; anticipates second-order and systemic effects."),
+        (4, "Strategy authority",   "Defines strategic direction for business units or organisations; designs strategic planning and governance processes; resolves ambiguous or conflicting strategic priorities; advises top decision-makers on long-term implications."),
+        (5, "Strategy architect / thought leader", "Develops new strategic concepts, models, or methodologies; influences organisational or industry strategic thinking; anticipates long-term economic, technological, and societal shifts; integrates strategy with transformation, culture, and governance."),
+    ],
+    "Leadership": [
+        (0, "Leadership aptitude",  "Demonstrates openness to responsibility and growth; shows awareness of own strengths and development areas; accepts guidance constructively; has the potential to develop professional leadership capabilities. No demonstrated leadership yet."),
+        (1, "Self-leadership",      "Takes ownership of own work, quality, and deadlines; acts reliably and consistently; seeks feedback and applies it; communicates clearly and professionally; demonstrates accountability for own outputs. Leads own work through professional discipline."),
+        (2, "Informal expert leadership", "Supports peers through content-based problem-solving; shares expertise proactively; influences others through professional reasoning and example; builds trust through competence and reliability. Leads peers through expertise, not authority."),
+        (3, "Team leadership",      "Leads teams, projects, or workstreams based on subject-matter authority; aligns people around goals and professional standards; guides performance and development through coaching; resolves conflicts using professional judgment. Leads delivery by integrating multiple areas of expertise."),
+        (4, "Organisational leadership", "Leads multiple teams or major organisational units through professional authority; shapes culture, values, and norms grounded in expertise; builds leadership and expert capability in others; aligns structures, processes, and people with strategic intent."),
+        (5, "Institutional leadership", "Shapes organisational identity, purpose, and long-term direction; influences leadership philosophy, governance, and professional ethics; acts as a moral, cultural, and professional reference point; represents the organisation externally as a trusted authority."),
+    ],
+    "Transformational": [
+        (0, "Transformational aptitude", "Understands that change and uncertainty are inherent to organisations; can function in evolving or unclear contexts with guidance; shows openness to learning and adjustment. Basic capacity to cope with change, not yet independent."),
+        (1, "Adaptive professional", "Operates effectively in changing, ambiguous contexts; adjusts approach as information evolves; maintains performance during transitions; learns and recalibrates continuously. Can function professionally in a VUCA environment."),
+        (2, "Independent change operator", "Anticipates change impacts on own work and immediate environment; reframes problems as contexts evolve; helps others navigate uncertainty; integrates legal, data, and strategic perspectives during change."),
+        (3, "Transformation lead",  "Designs and leads change initiatives; translates strategy into transition paths; aligns stakeholders during transformation; manages systemic interdependencies."),
+        (4, "Strategic transformation leader", "Shapes large-scale transformations; redesigns organisational systems and models; balances stability and change; acts as transformation reference authority. Enterprise-level transformation authority."),
+        (5, "System architect",     "Redefines how organisations adapt and evolve; creates new transformation paradigms; influences professional or industry thinking; anticipates long-term systemic shifts. Architect of systemic transformation."),
+    ],
+}
+
 def page_technical():
     page_header("Technical Competency",
                 "Multidisciplinary expertise across five domains · Weight: 12.5%", "Technical")
@@ -470,6 +513,15 @@ def page_technical():
     score_slider("Transformational", "tc_transformational",
         hint="Interest and capability to drive change; expanding expertise into new domains")
     st.markdown('</div>', unsafe_allow_html=True)
+
+    with st.expander("Score anchors — all five technical domains"):
+        tabs = st.tabs(list(TECH_ANCHORS.keys()))
+        for tab, (domain, rows) in zip(tabs, TECH_ANCHORS.items()):
+            with tab:
+                st.markdown("| Score | Level | Description |\n|--|--|--|")
+                for score, level, desc in rows:
+                    st.markdown(f"| **{score}** | {level} | {desc} |")
+
     tc = sum(st.session_state[k] for k in ["tc_legal","tc_data","tc_strategy","tc_leadership","tc_transformational"]) / 5
     st.markdown(f'<div style="margin:4px 0 16px 0;">{score_bar_html(tc)}</div>', unsafe_allow_html=True)
     st.caption(f"Technical Competency score: **{tc:.2f} / 5** (arithmetic average)")
