@@ -87,11 +87,21 @@ SCORE_KEYS = [
     "resp_scope", "resp_auto", "resp_rev", "resp_dec",
 ]
 
+# Only Technical Competency and Professional Capital allow a score of 0 —
+# every other sub-dimension has a minimum score of 1.
+ZERO_OK_KEYS = {
+    "tc_legal", "tc_data", "tc_strategy", "tc_leadership", "tc_transformational",
+    "pc_cred", "pc_rel", "pc_org",
+}
+
+def min_score(key):
+    return 0 if key in ZERO_OK_KEYS else 1
+
 DEFAULTS = {
     # Job info
     "job_name": "", "evaluator": "",
-    # All scores start at 0 (lowest)
-    **{k: 0 for k in SCORE_KEYS},
+    # Each score starts at its lowest allowed value (0 for TC/PC, 1 elsewhere)
+    **{k: min_score(k) for k in SCORE_KEYS},
     # Per-sub-dimension reasoning (optional, free text)
     **{f"comment_{k}": "" for k in SCORE_KEYS},
     # Overall reasoning on Results page
@@ -220,12 +230,19 @@ html, body, [class*="css"] {
     color: #94A3B8; margin-bottom: 14px; padding-bottom: 10px; border-bottom: 1px solid #EDF2F7;
 }
 
-/* ── Info panel ── */
+/* ── Info panel & radio cards share the same outer width and box model ── */
+.info-panel, div[data-testid="stRadio"] > div > label {
+    width: 100% !important;
+    box-sizing: border-box !important;
+}
 .info-panel {
     background: #EFF7F4; border: 1px solid #B8D8D2; border-left: 4px solid #164A41;
     border-radius: 0 8px 8px 0; padding: 14px 18px; margin-bottom: 22px;
     font-size: 15px; color: #164A41; line-height: 1.6;
 }
+/* The Streamlit radio wrapper sometimes inherits a width:auto from baseweb; force it
+   to fill the column so each option card lines up with the info panel above. */
+div[data-testid="stRadio"], div[data-testid="stRadio"] > div { width: 100% !important; }
 
 /* ── Metric cards ── */
 .metric-card {
@@ -390,11 +407,12 @@ def lookup_level(score):
 # ──────────────────────────────────────────────────────────────────────────────
 def page_header(title, subtitle, badge=None):
     b = badge or title.upper()
+    subtitle_html = f'<p class="page-subtitle">{subtitle}</p>' if subtitle else ""
     st.markdown(f"""
 <div class="page-header">
   <div class="page-header-badge">{b}</div>
   <h1 class="page-title">{title}</h1>
-  <p class="page-subtitle">{subtitle}</p>
+  {subtitle_html}
 </div>""", unsafe_allow_html=True)
 
 def info_box(text):
@@ -425,28 +443,34 @@ def score_slider(label, key, hint=None):
     Streamlit uses for the rendered widget — kept separate so values survive
     page navigation.
     """
+    lo = min_score(key)
     wkey = f"_w_{key}"
     if wkey not in st.session_state:
-        st.session_state[wkey] = st.session_state.get(key, 0)
+        st.session_state[wkey] = st.session_state.get(key, lo)
     if hint:
         st.markdown(f'<div class="sub-dim-hint">{hint}</div>', unsafe_allow_html=True)
-    val = st.select_slider(label, options=list(range(6)),
+    val = st.select_slider(label, options=list(range(lo, 6)),
                            format_func=lambda x: SCORE_LABELS[x], key=wkey)
     st.session_state[key] = val
     _reasoning_expander(key, label)
     return val
 
 def anchor_radio(domain, key, prompt, anchors):
-    """Domain heading + prompt + radio + per-sub-dimension reasoning expander."""
+    """Domain heading + prompt + radio + per-sub-dimension reasoning expander.
+
+    `anchors` is a list of (score, level, description) tuples covering 0–5.
+    Sub-dimensions whose minimum is 1 simply skip the score-0 option.
+    """
+    lo = min_score(key)
     wkey = f"_w_{key}"
     if wkey not in st.session_state:
-        st.session_state[wkey] = st.session_state.get(key, 0)
+        st.session_state[wkey] = st.session_state.get(key, lo)
     st.markdown(f'<h2 class="domain-heading">{domain}</h2>', unsafe_allow_html=True)
     if prompt:
         st.markdown(f'<p class="domain-prompt">{prompt}</p>', unsafe_allow_html=True)
     val = st.radio(
         domain,
-        options=list(range(6)),
+        options=list(range(lo, 6)),
         format_func=lambda x: f"{anchors[x][0]} - {anchors[x][1]}. {anchors[x][2]}",
         key=wkey,
         label_visibility="collapsed",
@@ -1083,14 +1107,6 @@ def page_results():
         rows.append({"Dimension":"TOTAL","Score":"","Weight":sum(weights),"Weighted":round(sc["raw"],4)})
         st.dataframe(pd.DataFrame(rows), hide_index=True, use_container_width=True)
 
-    with st.expander("Full pay structure — all levels"):
-        ps = [{"Level":lvl,"Score":d["score"],"Gross /mo":f"€{d['salary']:,.2f}",
-               "Annual (×13.92)":f"€{d['salary']*13.92:,.0f}",
-               "Mobility":f"€{d['mobility']:,}",
-               "Selected": "Yes" if lvl==cat else ""}
-              for lvl,d in PAY_STRUCTURE.items()]
-        st.dataframe(pd.DataFrame(ps), hide_index=True, use_container_width=True)
-
     st.markdown('<hr style="border:none;border-top:1px solid #EDF2F7;margin:20px 0;">', unsafe_allow_html=True)
     comment_box("overall_comments", "Overall observations and rationale for the proposed pay level…")
     st.markdown('<hr style="border:none;border-top:1px solid #EDF2F7;margin:20px 0;">', unsafe_allow_html=True)
@@ -1106,8 +1122,8 @@ def page_results():
 
 
 def page_info():
-    page_header("Reward Strategy", "Reference information from the Stratarius Reward Strategy document", "Reference")
-    tab1, tab2, tab3, tab4 = st.tabs(["Philosophy", "Scoring Logic", "Profile Examples", "Total Package"])
+    page_header("Reward Strategy", "", "Reference")
+    tab1, tab2 = st.tabs(["Philosophy", "Scoring Logic"])
 
     with tab1:
         st.markdown("""
@@ -1122,10 +1138,6 @@ def page_info():
 | **Responsibility** | We value accountability |
 | **Effort** | We recognize burden |
 | **Working Conditions** | We recognize context |
-
-### Pay Levels
-
-Approximately 41 pay levels across 5 categories: **A5–A9 · B0–B9 · C0–C9 · D0–D9 · E0–E5**
 
 ### Governance
 
@@ -1147,73 +1159,13 @@ The pay level is based on the individual's capabilities *(looking back)* and the
 
 ### Scoring Methods
 
-- **Technical Competency:** Arithmetic average of 5 domains *(minimum 0 or 1 in at least one domain)*
-- **Behavioural Competency:** Weighted geometric mean — `(IC^0.3 × Freq^0.25 × Cons^0.25 × Conf^0.2) × 5`
-- **Interaction Complexity rule:** 2+ scores of 5 → IC = 5 | 2+ scores of 4 → IC = 4 | else: rounded average
-- **Effort:** `AVERAGE(mental subs) × 0.5 + AVERAGE(emotional subs) × 0.5`
-- **All other dimensions:** Arithmetic average
-- **Final score:** Weighted sum → rounded *down* to 1 decimal
-""")
-
-    with tab3:
-        col1, col2 = st.columns(2)
-        with col1:
-            st.markdown("""<div class="card">
-<div class="card-title">Profile — Level B6</div>
-
-**HR legal expert · approx. 5 years experience**
-
-*Technical:* Solid legal expertise, data literate, integrates legal insight with strategy, supports peers
-
-*Behavioural:* Ambiguous client situations (mainly problem, less system); manages disagreement
-
-*Professional Capital:* Emerging credibility — advice still requires some validation
-
-*Responsibility:* Accountable for own analyses; exercises judgment within defined boundaries
-
-**B6 — €4,489.80 gross / month**
-</div>""", unsafe_allow_html=True)
-        with col2:
-            st.markdown("""<div class="card">
-<div class="card-title">Profile — Level C4</div>
-
-**HR legal expert · approx. 10 years experience**
-
-*Technical:* HR legal authority; shapes legal frameworks; leads teams based on subject-matter expertise
-
-*Behavioural:* Largely autonomous in ambiguous situations (both problem and system)
-
-*Professional Capital:* Strong credibility — advice normally accepted without escalation
-
-*Responsibility:* Client-level and organizational impact; autonomous decisions; owns project outcomes
-
-**C4 — €6,633.47 gross / month**
-</div>""", unsafe_allow_html=True)
-
-    with tab4:
-        st.markdown("""
-### Total Compensation Package
-
-| Component | Details |
-|--|--|
-| Base monthly salary | Paid 13.92× per year |
-| Mobility budget / company car | A: €780 · B: €930 · C: €1,080 · D: €1,230 · E: €1,380 /month |
-| Meal vouchers | €10 / worked day (employer €8.91, employee €1.09) |
-| Home work allowance | €150 / month (min. 1 day/week from home) |
-| Ecovouchers | €250 / year |
-| Yearly premium | €330.84 (2026) |
-| Supplementary pension | % of 12 × monthly base salary |
-| Guaranteed income | Up to 100% regular net income (illness/accident) |
-| Hospitalisation insurance | Option to affiliate family members |
-| Collective bonus | Up to €3,700 net / year (FTE) |
-| Share purchase | Possibility to purchase Stratarius shares |
-| Paid days off | 45 days / year (FTE) |
-
-### Professional and Eudaimonic Well-being
-
-MacBook Air / Dell XPS · curved screens · ergonomic setup at office and home · LinkedIn Premium ·
-networking events (Belgium and abroad) · workation · formal education · personal brand opportunities ·
-room for research and experimentation
+- **Technical Competency:** Arithmetic average of 5 domains. Scores 0–5; only Technical Competency and Professional Capital allow a 0.
+- **Behavioural Competency:** Weighted geometric mean — `(IC^0.3 × Freq^0.25 × Cons^0.25 × Conf^0.2) × 5`. Scores 1–5.
+- **Interaction Complexity rule:** 2+ scores of 5 → IC = 5 | 2+ scores of 4 → IC = 4 | else: rounded average.
+- **Effort:** `AVERAGE(mental subs) × 0.5 + AVERAGE(emotional subs) × 0.5`. Scores 1–5.
+- **Professional Capital:** Arithmetic average of 3 dimensions. Scores 0–5.
+- **Working Conditions & Responsibility:** Arithmetic average. Scores 1–5.
+- **Final score:** Weighted sum → rounded *down* to 1 decimal.
 """)
 
 
