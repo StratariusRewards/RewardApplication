@@ -117,8 +117,11 @@ html, body, [class*="css"] {
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
 }
 
-/* ── Hide sidebar collapse toggle ── */
-[data-testid="collapsedControl"] { display: none !important; }
+/* ── Force light app background (overrides any dark base theme) ── */
+.stApp, [data-testid="stAppViewContainer"], .main, [data-testid="stMain"] {
+    background-color: #FFFFFF !important;
+}
+[data-testid="stHeader"] { background: transparent !important; }
 
 /* ── Sidebar — light theme ── */
 [data-testid="stSidebar"] {
