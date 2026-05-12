@@ -136,6 +136,27 @@ html, body, [class*="css"] {
 }
 [data-testid="stHeader"] { background: transparent !important; }
 
+/* ── Sidebar permanently pinned open ── */
+[data-testid="stSidebar"] {
+    min-width: 244px !important;
+    max-width: 244px !important;
+    transform: none !important;
+    visibility: visible !important;
+    margin-left: 0 !important;
+}
+[data-testid="stSidebar"][aria-expanded="false"] {
+    margin-left: 0 !important;
+    transform: none !important;
+}
+/* Hide every flavour of sidebar collapse/expand button so it can't be toggled away */
+[data-testid="stSidebarCollapseButton"],
+[data-testid="stSidebarCollapsedControl"],
+[data-testid="collapsedControl"],
+button[kind="header"],
+button[kind="headerNoPadding"] {
+    display: none !important;
+}
+
 /* ── Sidebar — light theme ── */
 [data-testid="stSidebar"] {
     background: #FFFFFF !important;
