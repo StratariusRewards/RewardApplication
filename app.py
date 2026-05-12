@@ -79,7 +79,7 @@ PAGES = [
 # ──────────────────────────────────────────────────────────────────────────────
 DEFAULTS = {
     # Job info
-    "job_name": "", "job_title": "", "department": "", "evaluator": "", "job_notes": "",
+    "job_name": "", "evaluator": "",
     # Technical competency
     "tc_legal": 2, "tc_data": 2, "tc_strategy": 2, "tc_leadership": 2, "tc_transformational": 2,
     # Behavioural competency
@@ -117,23 +117,26 @@ html, body, [class*="css"] {
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
 }
 
-/* ── Sidebar ── */
+/* ── Hide sidebar collapse toggle ── */
+[data-testid="collapsedControl"] { display: none !important; }
+
+/* ── Sidebar — light theme ── */
 [data-testid="stSidebar"] {
-    background: linear-gradient(180deg, #164A41 0%, #1D5C4E 100%) !important;
-    border-right: none !important;
+    background: #FFFFFF !important;
+    border-right: 1px solid #D8EBE7 !important;
 }
-[data-testid="stSidebar"] * { color: #CBD5E0 !important; }
+[data-testid="stSidebar"] * { color: #164A41 !important; }
 [data-testid="stSidebarContent"] { padding: 0 !important; }
 
 .sidebar-logo {
-    background: rgba(255,255,255,0.05);
+    background: #164A41;
     padding: 22px 20px 18px 20px;
-    border-bottom: 1px solid rgba(255,255,255,0.08);
+    border-bottom: 1px solid #D8EBE7;
     margin-bottom: 6px;
 }
 .sidebar-logo img { height: 34px; filter: brightness(0) invert(1); }
 .sidebar-brand {
-    color: rgba(255,255,255,0.5) !important;
+    color: rgba(255,255,255,0.65) !important;
     font-size: 11px;
     font-weight: 600;
     letter-spacing: 0.1em;
@@ -146,7 +149,7 @@ html, body, [class*="css"] {
     background: transparent !important;
     border: none !important;
     border-radius: 7px !important;
-    color: #94A3B8 !important;
+    color: #4A7A70 !important;
     font-size: 13px !important;
     font-weight: 500 !important;
     text-align: left !important;
@@ -156,36 +159,36 @@ html, body, [class*="css"] {
     box-shadow: none !important;
 }
 [data-testid="stSidebar"] .stButton > button:hover {
-    background: rgba(255,255,255,0.07) !important;
-    color: #E2E8F0 !important;
+    background: #EFF7F4 !important;
+    color: #164A41 !important;
 }
 [data-testid="stSidebar"] .stButton > button[kind="primary"] {
-    background: rgba(224,123,57,0.18) !important;
-    border-left: 3px solid #E07B39 !important;
-    color: #FFFFFF !important;
+    background: #E8F4F1 !important;
+    border-left: 3px solid #164A41 !important;
+    color: #164A41 !important;
     font-weight: 600 !important;
 }
 
 .score-preview {
     margin: 14px 10px 6px 10px;
-    background: rgba(255,255,255,0.06);
+    background: #F5FAF8;
     border-radius: 10px;
     padding: 14px 16px;
-    border: 1px solid rgba(255,255,255,0.08);
+    border: 1px solid #D8EBE7;
 }
 .score-preview-label {
     font-size: 10px !important;
     font-weight: 600;
     letter-spacing: 0.1em;
     text-transform: uppercase;
-    color: #64748B !important;
+    color: #7FA89F !important;
     margin-bottom: 8px;
 }
-.score-big { font-size: 30px !important; font-weight: 700 !important; color: #FFFFFF !important; line-height: 1.1; }
+.score-big { font-size: 30px !important; font-weight: 700 !important; color: #164A41 !important; line-height: 1.1; }
 .score-level { font-size: 14px !important; font-weight: 600 !important; color: #E07B39 !important; margin-top: 2px; }
-.score-salary { font-size: 11px !important; color: #64748B !important; margin-top: 3px; }
-.score-bar-bg { background: rgba(255,255,255,0.1); border-radius: 4px; height: 4px; margin-top: 10px; overflow: hidden; }
-.score-bar-fill { height: 4px; border-radius: 4px; background: linear-gradient(90deg,#E07B39,#F5A462); }
+.score-salary { font-size: 11px !important; color: #7FA89F !important; margin-top: 3px; }
+.score-bar-bg { background: #D8EBE7; border-radius: 4px; height: 4px; margin-top: 10px; overflow: hidden; }
+.score-bar-fill { height: 4px; border-radius: 4px; background: linear-gradient(90deg,#164A41,#E07B39); }
 
 /* ── Main content ── */
 .main .block-container { padding: 2rem 2.5rem 3rem 2.5rem; max-width: 960px; }
@@ -460,18 +463,11 @@ def _textarea(label, key, **kwargs):
     return val
 
 def page_job_info():
-    page_header("Job Information", "Basic details about the role being evaluated.", "New Evaluation")
-    st.markdown('<div class="card"><div class="card-title">Role Details</div>', unsafe_allow_html=True)
-    col1, col2 = st.columns(2)
-    with col1:
-        _text("Candidate / Role Name", "job_name")
-        _text("Job Title", "job_title")
-        _text("Department / Team", "department")
-    with col2:
-        _text("Evaluator", "evaluator")
-        st.date_input("Evaluation Date", key="eval_date")
-        _textarea("General Notes", "job_notes", height=70,
-                  placeholder="Any context or notes for this evaluation…")
+    page_header("Job Information", "Basic details about the evaluation.", "New Evaluation")
+    st.markdown('<div class="card"><div class="card-title">Evaluation Details</div>', unsafe_allow_html=True)
+    _text("Employee / Candidate Name", "job_name")
+    _text("Evaluator", "evaluator")
+    st.date_input("Evaluation Date", key="eval_date")
     st.markdown('</div>', unsafe_allow_html=True)
 
     info_box("""<strong>How to use this tool</strong><br>
@@ -943,9 +939,9 @@ def export_excel(sc):
     ws1.row_dimensions[1].height = 30
     hdr(ws1,1,1,"JOB ARCHITECTURE EVALUATION — STRATARIUS",navy,13); ws1.merge_cells("A1:B1")
     for i,(k,v) in enumerate([
-        ("Candidate / Role", s.get("job_name","")), ("Job Title", s.get("job_title","")),
-        ("Department", s.get("department","")), ("Evaluator", s.get("evaluator","")),
-        ("Evaluation Date", str(s.get("eval_date",""))), ("Notes", s.get("job_notes","")),
+        ("Employee / Candidate", s.get("job_name","")),
+        ("Evaluator", s.get("evaluator","")),
+        ("Evaluation Date", str(s.get("eval_date",""))),
     ], start=2):
         dat(ws1,i,1,k,bold=True,bg=light); dat(ws1,i,2,v)
 
