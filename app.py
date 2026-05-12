@@ -77,26 +77,25 @@ PAGES = [
 # ──────────────────────────────────────────────────────────────────────────────
 # SESSION STATE — initialise all keys once so widgets never reset on navigate
 # ──────────────────────────────────────────────────────────────────────────────
+SCORE_KEYS = [
+    "tc_legal", "tc_data", "tc_strategy", "tc_leadership", "tc_transformational",
+    "bc_ic_cp", "bc_ic_cs", "bc_ic_team", "bc_ic_org", "bc_freq", "bc_cons", "bc_conf",
+    "ef_conc", "ef_prob", "ef_info", "ef_multi", "ef_switch",
+    "ef_own", "ef_oth", "ef_conf", "ef_press",
+    "pc_cred", "pc_rel", "pc_org",
+    "wc_sched", "wc_travel", "wc_social",
+    "resp_scope", "resp_auto", "resp_rev", "resp_dec",
+]
+
 DEFAULTS = {
     # Job info
     "job_name": "", "evaluator": "",
-    # Technical competency
-    "tc_legal": 2, "tc_data": 2, "tc_strategy": 2, "tc_leadership": 2, "tc_transformational": 2,
-    # Behavioural competency
-    "bc_ic_cp": 2, "bc_ic_cs": 2, "bc_ic_team": 2, "bc_ic_org": 2,
-    "bc_freq": 2, "bc_cons": 2, "bc_conf": 2,
-    # Effort
-    "ef_conc": 2, "ef_prob": 2, "ef_info": 2, "ef_multi": 2, "ef_switch": 2,
-    "ef_own": 2, "ef_oth": 2, "ef_conf": 2, "ef_press": 2,
-    # Professional capital
-    "pc_cred": 2, "pc_rel": 2, "pc_org": 2,
-    # Working conditions
-    "wc_sched": 2, "wc_travel": 2, "wc_social": 2,
-    # Responsibility
-    "resp_scope": 2, "resp_auto": 2, "resp_rev": 2, "resp_dec": 2,
-    # Comments
-    "comment_tc": "", "comment_bc": "", "comment_ef": "",
-    "comment_pc": "", "comment_wc": "", "comment_resp": "", "overall_comments": "",
+    # All scores start at 0 (lowest)
+    **{k: 0 for k in SCORE_KEYS},
+    # Per-sub-dimension reasoning (optional, free text)
+    **{f"comment_{k}": "" for k in SCORE_KEYS},
+    # Overall reasoning on Results page
+    "overall_comments": "",
     # Navigation
     "_page": "job_info",
 }
@@ -300,7 +299,12 @@ html, body, [class*="css"] {
 
 /* ── Anchor radio blocks ── */
 div[data-testid="stRadio"] > label { font-size: 14px !important; font-weight: 600 !important; color: #164A41 !important; margin-bottom: 10px !important; }
-div[data-testid="stRadio"] > div { gap: 6px !important; }
+div[data-testid="stRadio"] > div {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 6px !important;
+    width: 100% !important;
+}
 div[data-testid="stRadio"] > div > label {
     background: #F5FAF8 !important;
     border: 1px solid #D8EBE7 !important;
@@ -308,6 +312,9 @@ div[data-testid="stRadio"] > div > label {
     padding: 10px 14px !important;
     cursor: pointer !important;
     transition: background 0.15s, border-color 0.15s !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+    align-items: flex-start !important;
 }
 div[data-testid="stRadio"] > div > label:hover {
     background: #EBF5F1 !important;
@@ -391,32 +398,47 @@ def page_header(title, subtitle, badge=None):
 def info_box(text):
     st.markdown(f'<div class="info-panel">{text}</div>', unsafe_allow_html=True)
 
+def _reasoning_expander(score_key, subject):
+    """Optional free-text reasoning, labelled with the sub-dimension subject."""
+    cmt_key = f"comment_{score_key}"
+    wkey = f"_wc_{cmt_key}"
+    if wkey not in st.session_state:
+        st.session_state[wkey] = st.session_state.get(cmt_key, "")
+    has_text = bool(st.session_state.get(cmt_key, ""))
+    label = f"Reasoning for {subject} (optional)"
+    with st.expander(label, expanded=has_text):
+        st.text_area(
+            label,
+            key=wkey,
+            height=80,
+            placeholder=f"Why did you select this score for {subject}? Add the reasoning here.",
+            label_visibility="collapsed",
+        )
+    st.session_state[cmt_key] = st.session_state[wkey]
+
 def score_slider(label, key, hint=None):
-    """Persist scores across page navigation.
+    """Slider + per-sub-dimension reasoning expander.
 
-    Streamlit deletes widget keys (key=) from session_state when the widget is
-    not rendered. To survive navigation, we separate:
-      - storage key  (e.g. "tc_legal")  — set by init_state(), never a widget key
-      - widget key   (e.g. "_w_tc_legal") — used only for the slider DOM element
-
-    On every render we (re)initialise the widget key from the storage key if it
-    was cleared, render the slider, then write the result back to the storage key.
+    Storage key (e.g. 'tc_legal') is persistent; widget key (_w_*) is what
+    Streamlit uses for the rendered widget — kept separate so values survive
+    page navigation.
     """
     wkey = f"_w_{key}"
     if wkey not in st.session_state:
-        st.session_state[wkey] = st.session_state.get(key, 2)
+        st.session_state[wkey] = st.session_state.get(key, 0)
     if hint:
         st.markdown(f'<div class="sub-dim-hint">{hint}</div>', unsafe_allow_html=True)
     val = st.select_slider(label, options=list(range(6)),
                            format_func=lambda x: SCORE_LABELS[x], key=wkey)
-    st.session_state[key] = val   # write back to persistent storage key
+    st.session_state[key] = val
+    _reasoning_expander(key, label)
     return val
 
 def anchor_radio(domain, key, prompt, anchors):
-    """Domain heading + question prompt + radio with first-person anchor descriptions."""
+    """Domain heading + prompt + radio + per-sub-dimension reasoning expander."""
     wkey = f"_w_{key}"
     if wkey not in st.session_state:
-        st.session_state[wkey] = st.session_state.get(key, 2)
+        st.session_state[wkey] = st.session_state.get(key, 0)
     st.markdown(f'<h2 class="domain-heading">{domain}</h2>', unsafe_allow_html=True)
     if prompt:
         st.markdown(f'<p class="domain-prompt">{prompt}</p>', unsafe_allow_html=True)
@@ -428,10 +450,11 @@ def anchor_radio(domain, key, prompt, anchors):
         label_visibility="collapsed",
     )
     st.session_state[key] = val
+    _reasoning_expander(key, domain)
     return val
 
 def comment_box(key, placeholder="Add comments, justification or context…"):
-    """Same separation: _wc_ widget key, persistent storage key."""
+    """Standalone text area (used for the overall reasoning on the Results page)."""
     wkey = f"_wc_{key}"
     if wkey not in st.session_state:
         st.session_state[wkey] = st.session_state.get(key, "")
@@ -569,8 +592,9 @@ TECH_ANCHORS = {
 
 def page_technical():
     page_header("Technical Competency",
-                "Multidisciplinary expertise across five domains · Weight: 12.5%", "Technical")
-    info_box("At Stratarius, <strong>leadership belongs to technical capability</strong> — because leadership without expertise has no legitimacy. Score each domain independently; at least one domain should score 0 or 1. <strong>When in doubt, select the lower level.</strong>")
+                "Multidisciplinary expertise across five domains · Weight: 12.5% · Equally important as behavioural competency",
+                "Technical")
+    info_box("At Stratarius, <strong>leadership belongs to technical capability</strong> — because leadership without expertise has no legitimacy. Score each domain independently. <strong>When in doubt, select the lower level.</strong>")
 
     keys = ["tc_legal", "tc_data", "tc_strategy", "tc_leadership", "tc_transformational"]
     for key, (domain, meta) in zip(keys, TECH_ANCHORS.items()):
@@ -579,7 +603,6 @@ def page_technical():
     tc = sum(st.session_state[k] for k in keys) / 5
     st.markdown(f'<div style="margin:4px 0 16px 0;">{score_bar_html(tc)}</div>', unsafe_allow_html=True)
     st.caption(f"Technical Competency score: **{tc:.2f} / 5** (arithmetic average)")
-    comment_box("comment_tc")
 
 
 def page_behavioural():
@@ -608,7 +631,6 @@ def page_behavioural():
     bc = round((ic_n**0.3*fr_n**0.25*co_n**0.25*cf_n**0.2)*5,2) if all(v>0 for v in [ic_n,fr_n,co_n,cf_n]) else 0.0
     st.markdown(f'<div style="margin:4px 0 16px 0;">{score_bar_html(bc)}</div>', unsafe_allow_html=True)
     st.caption(f"Behavioural Competency score: **{bc:.2f} / 5** (geometric mean × 5)")
-    comment_box("comment_bc")
 
 
 def page_effort():
@@ -637,7 +659,6 @@ def page_effort():
     effort = mental + emot
     st.markdown(f'<div style="margin:4px 0 16px 0;">{score_bar_html(effort)}</div>', unsafe_allow_html=True)
     st.caption(f"Total Effort score: **{effort:.2f} / 5**")
-    comment_box("comment_ef")
 
 
 def page_professional():
@@ -673,7 +694,6 @@ def page_professional():
     pc = sum(st.session_state[k] for k in ["pc_cred","pc_rel","pc_org"]) / 3
     st.markdown(f'<div style="margin:4px 0 16px 0;">{score_bar_html(pc)}</div>', unsafe_allow_html=True)
     st.caption(f"Professional Capital score: **{pc:.2f} / 5** (arithmetic average)")
-    comment_box("comment_pc")
 
 
 def page_working():
@@ -691,7 +711,6 @@ def page_working():
     wc = sum(st.session_state[k] for k in ["wc_sched","wc_travel","wc_social"]) / 3
     st.markdown(f'<div style="margin:4px 0 16px 0;">{score_bar_html(wc)}</div>', unsafe_allow_html=True)
     st.caption(f"Working Conditions score: **{wc:.2f} / 5** (arithmetic average)")
-    comment_box("comment_wc")
 
 
 def page_responsibility():
@@ -720,7 +739,6 @@ def page_responsibility():
     resp = sum(st.session_state[k] for k in ["resp_scope","resp_auto","resp_rev","resp_dec"]) / 4
     st.markdown(f'<div style="margin:4px 0 16px 0;">{score_bar_html(resp)}</div>', unsafe_allow_html=True)
     st.caption(f"Responsibility score: **{resp:.2f} / 5** (arithmetic average)")
-    comment_box("comment_resp")
 
 
 def page_results():
@@ -969,46 +987,47 @@ def export_excel(sc):
     hdr(ws2,1,1,"Sub-dimension"); hdr(ws2,1,2,"Score"); hdr(ws2,1,3,"Weight"); hdr(ws2,1,4,"Dim Score"); hdr(ws2,1,5,"Comments")
     row = [2]
 
-    def add_dim(name, score, wt, comment=""):
+    def add_dim(name, score, wt):
         r = row[0]
         hdr(ws2,r,1,name,mid); dat(ws2,r,2,"")
-        dat(ws2,r,3,wt,align=ctr); dat(ws2,r,4,round(score,3),bold=True,align=ctr); dat(ws2,r,5,comment,align=wrap)
+        dat(ws2,r,3,wt,align=ctr); dat(ws2,r,4,round(score,3),bold=True,align=ctr); dat(ws2,r,5,"",align=wrap)
         row[0] += 1
 
-    def add_sub(name, score, wt=""):
+    def add_sub(name, score, score_key, wt=""):
         r = row[0]
+        comment = s.get(f"comment_{score_key}","") if score_key else ""
         dat(ws2,r,1,f"    {name}",bg=light); dat(ws2,r,2,score,align=ctr)
-        dat(ws2,r,3,wt,align=ctr); dat(ws2,r,4,""); dat(ws2,r,5,"")
+        dat(ws2,r,3,wt,align=ctr); dat(ws2,r,4,""); dat(ws2,r,5,comment,align=wrap)
         row[0] += 1
 
-    add_dim("1. Technical Competency", sc["tc"], "12.5%", s.get("comment_tc",""))
-    for k,lbl,w in [("tc_legal","Legal / Core","20%"),("tc_data","Data","20%"),("tc_strategy","Strategy","20%"),("tc_leadership","Leadership","20%"),("tc_transformational","Transformational","20%")]:
-        add_sub(lbl, s.get(k,2), w)
+    add_dim("1. Technical Competency", sc["tc"], "12.5%")
+    for k,lbl,w in [("tc_legal","Legal","20%"),("tc_data","Data","20%"),("tc_strategy","Strategy","20%"),("tc_leadership","Leadership","20%"),("tc_transformational","Transformational","20%")]:
+        add_sub(lbl, s.get(k,0), k, w)
 
-    add_dim("2. Behavioural Competency", sc["bc"], "12.5%", s.get("comment_bc",""))
+    add_dim("2. Behavioural Competency", sc["bc"], "12.5%")
     for k,lbl in [("bc_ic_cp","IC - Client problem"),("bc_ic_cs","IC - Client system"),("bc_ic_team","IC - Team interaction"),("bc_ic_org","IC - Org interaction")]:
-        add_sub(lbl, s.get(k,2))
-    add_sub(f"Interaction Complexity (computed: {sc['ic']})", sc['ic'], "30%")
+        add_sub(lbl, s.get(k,0), k)
+    add_sub(f"Interaction Complexity (computed: {sc['ic']})", sc['ic'], None, "30%")
     for k,lbl,w in [("bc_freq","Frequency","25%"),("bc_cons","Consequence","25%"),("bc_conf","Conflict","20%")]:
-        add_sub(lbl, s.get(k,2), w)
+        add_sub(lbl, s.get(k,0), k, w)
 
-    add_dim("3. Effort", sc["effort"], "12.5%", s.get("comment_ef",""))
+    add_dim("3. Effort", sc["effort"], "12.5%")
     for k,lbl in [("ef_conc","Mental: Concentration"),("ef_prob","Mental: Problem-solving"),("ef_info","Mental: Information"),("ef_multi","Mental: Multitasking"),("ef_switch","Mental: Role switching")]:
-        add_sub(lbl, s.get(k,2))
+        add_sub(lbl, s.get(k,0), k)
     for k,lbl in [("ef_own","Emotional: Own emotions"),("ef_oth","Emotional: Others emotions"),("ef_conf","Emotional: Conflict"),("ef_press","Emotional: Pressure")]:
-        add_sub(lbl, s.get(k,2))
+        add_sub(lbl, s.get(k,0), k)
 
-    add_dim("4. Professional Capital", sc["pc"], "25%", s.get("comment_pc",""))
+    add_dim("4. Professional Capital", sc["pc"], "25%")
     for k,lbl in [("pc_cred","Professional credibility"),("pc_rel","Relational capital"),("pc_org","Organizational capital")]:
-        add_sub(lbl, s.get(k,2), "1/3")
+        add_sub(lbl, s.get(k,0), k, "1/3")
 
-    add_dim("5. Working Conditions", sc["wc"], "12.5%", s.get("comment_wc",""))
+    add_dim("5. Working Conditions", sc["wc"], "12.5%")
     for k,lbl in [("wc_sched","Schedule demands"),("wc_travel","Travel demands"),("wc_social","Social environment")]:
-        add_sub(lbl, s.get(k,2), "33%")
+        add_sub(lbl, s.get(k,0), k, "33%")
 
-    add_dim("6. Level of Responsibility", sc["resp"], "25%", s.get("comment_resp",""))
+    add_dim("6. Level of Responsibility", sc["resp"], "25%")
     for k,lbl in [("resp_scope","Scope of impact"),("resp_auto","Autonomy and decision authority"),("resp_rev","Reversibility and risk"),("resp_dec","Decision complexity")]:
-        add_sub(lbl, s.get(k,2), "25%")
+        add_sub(lbl, s.get(k,0), k, "25%")
 
     # Sheet 3: Results
     ws3 = wb.create_sheet("Results & Pay Proposal")
