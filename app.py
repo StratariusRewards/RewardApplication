@@ -119,7 +119,7 @@ html, body, [class*="css"] {
 
 /* ── Sidebar ── */
 [data-testid="stSidebar"] {
-    background: linear-gradient(180deg, #0C1B2E 0%, #142540 100%) !important;
+    background: linear-gradient(180deg, #164A41 0%, #1D5C4E 100%) !important;
     border-right: none !important;
 }
 [data-testid="stSidebar"] * { color: #CBD5E0 !important; }
@@ -141,7 +141,7 @@ html, body, [class*="css"] {
     margin-top: 10px;
 }
 
-/* Nav buttons: override Streamlit defaults inside sidebar */
+/* Nav buttons */
 [data-testid="stSidebar"] .stButton > button {
     background: transparent !important;
     border: none !important;
@@ -191,24 +191,24 @@ html, body, [class*="css"] {
 .main .block-container { padding: 2rem 2.5rem 3rem 2.5rem; max-width: 960px; }
 
 /* ── Page header ── */
-.page-header { margin-bottom: 26px; padding-bottom: 18px; border-bottom: 2px solid #EDF2F7; }
+.page-header { margin-bottom: 26px; padding-bottom: 18px; border-bottom: 2px solid #D8EBE7; }
 .page-header-badge {
     display: inline-flex; align-items: center;
-    background: #FFF3E8; color: #E07B39;
+    background: #E8F4F1; color: #164A41;
     font-size: 10px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase;
     padding: 3px 10px; border-radius: 20px; margin-bottom: 10px;
 }
 .page-title {
     font-size: 24px !important; font-weight: 700 !important;
-    color: #0C1B2E !important; margin: 0 0 5px 0 !important; letter-spacing: -0.4px;
+    color: #164A41 !important; margin: 0 0 5px 0 !important; letter-spacing: -0.4px;
 }
 .page-subtitle { font-size: 13.5px; color: #64748B; margin: 0; }
 
 /* ── Cards ── */
 .card {
-    background: #FFFFFF; border: 1px solid #E2EAF4; border-radius: 12px;
+    background: #FFFFFF; border: 1px solid #D8EBE7; border-radius: 12px;
     padding: 20px 24px; margin-bottom: 16px;
-    box-shadow: 0 1px 3px rgba(12,27,46,0.04);
+    box-shadow: 0 1px 3px rgba(22,74,65,0.06);
 }
 .card-title {
     font-size: 11px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase;
@@ -217,26 +217,26 @@ html, body, [class*="css"] {
 
 /* ── Info panel ── */
 .info-panel {
-    background: #F0F7FF; border: 1px solid #C3D9F5; border-left: 4px solid #1A3A5C;
+    background: #EFF7F4; border: 1px solid #B8D8D2; border-left: 4px solid #164A41;
     border-radius: 0 8px 8px 0; padding: 13px 17px; margin-bottom: 20px;
-    font-size: 13.5px; color: #1A3A5C; line-height: 1.6;
+    font-size: 13.5px; color: #164A41; line-height: 1.6;
 }
 
 /* ── Metric cards ── */
 .metric-card {
-    background: #FFFFFF; border: 1px solid #E2EAF4; border-radius: 10px;
+    background: #FFFFFF; border: 1px solid #D8EBE7; border-radius: 10px;
     padding: 16px 18px; text-align: center;
-    box-shadow: 0 1px 3px rgba(12,27,46,0.04); height: 100%;
+    box-shadow: 0 1px 3px rgba(22,74,65,0.06); height: 100%;
 }
 .metric-label { font-size: 11px; font-weight: 600; letter-spacing: 0.07em; text-transform: uppercase; color: #94A3B8; margin-bottom: 6px; }
-.metric-value { font-size: 26px; font-weight: 700; color: #0C1B2E; line-height: 1.1; }
+.metric-value { font-size: 26px; font-weight: 700; color: #164A41; line-height: 1.1; }
 .metric-highlight { border: 2px solid #E07B39 !important; }
 .metric-highlight .metric-value { color: #E07B39; }
 
 /* ── Pay level badge ── */
 .pay-level-badge {
     display: inline-block;
-    background: linear-gradient(135deg,#0C1B2E 0%,#1A3A5C 100%);
+    background: linear-gradient(135deg,#164A41 0%,#1D5C4E 100%);
     color: #FFFFFF; font-size: 22px; font-weight: 700;
     padding: 6px 18px; border-radius: 8px; letter-spacing: 2px;
 }
@@ -248,8 +248,8 @@ html, body, [class*="css"] {
 .dim-weight { font-size: 11px; color: #94A3B8; width: 48px; text-align: right; margin-right: 12px; }
 .dim-score-bar { flex: 0 0 110px; }
 .dim-score-bar-bg { background: #EDF2F7; border-radius: 4px; height: 6px; }
-.dim-score-bar-fill { height: 6px; border-radius: 4px; background: linear-gradient(90deg,#1A3A5C,#E07B39); }
-.dim-score-val { font-size: 12px; font-weight: 600; color: #0C1B2E; width: 34px; text-align: right; margin-left: 10px; }
+.dim-score-bar-fill { height: 6px; border-radius: 4px; background: linear-gradient(90deg,#164A41,#E07B39); }
+.dim-score-val { font-size: 12px; font-weight: 600; color: #164A41; width: 34px; text-align: right; margin-left: 10px; }
 
 /* ── Compensation table ── */
 .comp-table { width: 100%; border-collapse: collapse; }
@@ -257,8 +257,8 @@ html, body, [class*="css"] {
 .comp-table tr:last-child { border-bottom: none; }
 .comp-table td { padding: 8px 10px; font-size: 13px; }
 .comp-table td:first-child { color: #64748B; font-weight: 500; }
-.comp-table td:last-child { color: #0C1B2E; font-weight: 600; text-align: right; }
-.comp-table .comp-hi td { background: #FFF8F4; }
+.comp-table td:last-child { color: #164A41; font-weight: 600; text-align: right; }
+.comp-table .comp-hi td { background: #EFF7F4; }
 .comp-table .comp-hi td:last-child { color: #E07B39; }
 
 /* ── Hint text under sliders ── */
@@ -272,19 +272,41 @@ html, body, [class*="css"] {
 
 /* ── Computed score chip ── */
 .computed-chip {
-    background: #FFF8F4; border-radius: 8px; padding: 10px 14px;
-    border: 1px solid #FBDFC8; font-size: 13.5px; margin: 6px 0 8px 0;
+    background: #EFF7F4; border-radius: 8px; padding: 10px 14px;
+    border: 1px solid #B8D8D2; font-size: 13.5px; margin: 6px 0 8px 0;
 }
+
+/* ── Anchor radio blocks ── */
+div[data-testid="stRadio"] > label { font-size: 14px !important; font-weight: 600 !important; color: #164A41 !important; margin-bottom: 10px !important; }
+div[data-testid="stRadio"] > div { gap: 6px !important; }
+div[data-testid="stRadio"] > div > label {
+    background: #F5FAF8 !important;
+    border: 1px solid #D8EBE7 !important;
+    border-radius: 8px !important;
+    padding: 10px 14px !important;
+    cursor: pointer !important;
+    transition: background 0.15s, border-color 0.15s !important;
+}
+div[data-testid="stRadio"] > div > label:hover {
+    background: #EBF5F1 !important;
+    border-color: #164A41 !important;
+}
+div[data-testid="stRadio"] > div > label:has(input:checked) {
+    background: #E8F4F1 !important;
+    border-color: #164A41 !important;
+    border-left: 3px solid #164A41 !important;
+}
+div[data-testid="stRadio"] > div > label p { font-size: 13px !important; color: #334155 !important; line-height: 1.55 !important; margin: 0 !important; }
 
 /* ── Streamlit widget overrides ── */
 div[data-testid="stSelectSlider"] label { font-size: 13.5px !important; font-weight: 500 !important; color: #334155 !important; }
-.stTextArea textarea { font-size: 13.5px !important; border-color: #E2EAF4 !important; border-radius: 8px !important; }
-.stTextInput input { font-size: 13.5px !important; border-color: #E2EAF4 !important; border-radius: 8px !important; }
+.stTextArea textarea { font-size: 13.5px !important; border-color: #D8EBE7 !important; border-radius: 8px !important; }
+.stTextInput input { font-size: 13.5px !important; border-color: #D8EBE7 !important; border-radius: 8px !important; }
 .stDateInput input { font-size: 13.5px !important; border-radius: 8px !important; }
 
 /* Primary button (main area) */
 .main .stButton > button[kind="primary"] {
-    background: linear-gradient(135deg,#0C1B2E 0%,#1A3A5C 100%) !important;
+    background: linear-gradient(135deg,#164A41 0%,#1D5C4E 100%) !important;
     border: none !important; border-radius: 8px !important;
     font-weight: 600 !important; font-size: 14px !important; color: #FFFFFF !important;
 }
@@ -294,7 +316,7 @@ div[data-testid="stSelectSlider"] label { font-size: 13.5px !important; font-wei
     font-weight: 600 !important; color: #FFFFFF !important;
 }
 button[data-baseweb="tab"] { font-size: 13px !important; font-weight: 500 !important; }
-details summary p { font-size: 13.5px !important; font-weight: 600 !important; color: #1A3A5C !important; }
+details summary p { font-size: 13.5px !important; font-weight: 600 !important; color: #164A41 !important; }
 
 /* Hide Streamlit chrome */
 #MainMenu, footer, header { visibility: hidden; }
@@ -368,6 +390,25 @@ def score_slider(label, key, hint=None):
     st.session_state[key] = val   # write back to persistent storage key
     return val
 
+def anchor_radio(domain, key, hint, anchors):
+    """One card per domain with radio buttons showing full anchor descriptions."""
+    wkey = f"_w_{key}"
+    if wkey not in st.session_state:
+        st.session_state[wkey] = st.session_state.get(key, 2)
+    st.markdown(f'<div class="card"><div class="card-title">{domain}</div>', unsafe_allow_html=True)
+    if hint:
+        st.markdown(f'<div class="sub-dim-hint">{hint}</div>', unsafe_allow_html=True)
+    val = st.radio(
+        domain,
+        options=list(range(6)),
+        format_func=lambda x: f"{anchors[x][0]} — {anchors[x][1]}: {anchors[x][2]}",
+        key=wkey,
+        label_visibility="collapsed",
+    )
+    st.session_state[key] = val
+    st.markdown('</div>', unsafe_allow_html=True)
+    return val
+
 def comment_box(key, placeholder="Add comments, justification or context…"):
     """Same separation: _wc_ widget key, persistent storage key."""
     wkey = f"_wc_{key}"
@@ -382,9 +423,9 @@ def score_bar_html(score, max_score=5):
     pct = max(0, min(100, score / max_score * 100))
     return f"""<div style="display:flex;align-items:center;gap:10px;">
   <div style="flex:1;background:#EDF2F7;border-radius:4px;height:6px;overflow:hidden;">
-    <div style="width:{pct:.0f}%;height:6px;border-radius:4px;background:linear-gradient(90deg,#1A3A5C,#E07B39);"></div>
+    <div style="width:{pct:.0f}%;height:6px;border-radius:4px;background:linear-gradient(90deg,#164A41,#E07B39);"></div>
   </div>
-  <span style="font-size:13px;font-weight:600;color:#0C1B2E;min-width:32px;text-align:right;">{score:.2f}</span>
+  <span style="font-size:13px;font-weight:600;color:#164A41;min-width:32px;text-align:right;">{score:.2f}</span>
 </div>"""
 
 def dimension_row(name, score, weight_label):
@@ -455,74 +496,73 @@ recommended pay level, and full compensation package, with an Excel export.""")
 
 
 TECH_ANCHORS = {
-    "Legal": [
-        (0, "Aptitude",             "Strong analytical and legal reasoning potential; understands core legal logic conceptually; can follow and discuss legal reasoning but cannot yet apply it professionally."),
-        (1, "Legal foundation",     "Understands core legal principles (employment, reward, governance, labour, social security, tax law); interprets standard legal positions with guidance; recognises legal implications in business and HR situations."),
-        (2, "Independent legal professional", "Independently analyses legal questions in business and HR contexts; translates law into business-relevant advice; identifies legal risk in reward, employment, and organisational design; advises on standard scenarios without supervision."),
-        (3, "Advanced legal specialist",      "Handles complex, multi-dimensional legal questions independently; integrates law with reward strategy, organisational design, and governance; designs legally robust solutions; anticipates legal consequences of strategic choices."),
-        (4, "Legal authority",      "Defines legal positions in complex, sensitive, or high-impact contexts; shapes legal governance and reward-legal frameworks; advises senior leadership; resolves novel legal-business dilemmas; acts as reference authority within the practice."),
-        (5, "Legal architect / thought leader", "Develops new legal-strategic methodologies or models; shapes how law is applied to reward strategy and people governance; influences professional or industry thinking; integrates law with economics, data, and organisational theory."),
-    ],
-    "Data": [
-        (0, "Aptitude",             "Strong quantitative and analytical aptitude; understands basic data, mathematical, and logical concepts; can follow computational reasoning but cannot yet apply it professionally."),
-        (1, "Foundational",         "Performs basic calculations; uses simple formulas; translates some business logic into Excel (or other tools); follows predefined models. Computation is mechanical and guided."),
-        (2, "Independent professional", "Builds structured calculation models; performs multi-step computations; checks consistency and logic; applies quantitative reasoning independently. Typical tools: Excel, basic BI, basic scripting."),
-        (3, "Advanced professional","Designs complex computational models; integrates multiple datasets; handles assumptions, sensitivities, and scenarios; combines computation with analytical judgment. Typical tools: advanced Excel, Power Query, Power Pivot, SQL."),
-        (4, "Expert",               "Designs data and computation architectures; chooses optimal computational methods; handles statistical, financial, or algorithmic complexity; validates and challenges models conceptually. Typical tools: Python, R, SQL, BI, advanced modelling."),
-        (5, "Reference authority",  "Designs or defines advanced computational and analytical methodologies; masters statistical, algorithmic, or quantitative modelling frameworks; influences how data analysis is done, not just how it is applied; operates beyond tool-level expertise."),
-    ],
-    "Strategy": [
-        (0, "Aptitude",             "Demonstrates curiosity about how organisations create value; understands basic business logic and cause–effect relationships; can follow strategic reasoning but does not yet apply it independently."),
-        (1, "Strategy foundation",  "Understands basic strategy concepts, frameworks, and terminology; applies standard tools under guidance; collects and structures information for strategic analysis; communicates strategic concepts clearly."),
-        (2, "Independent strategy professional", "Conducts structured strategic analyses independently; applies multiple frameworks appropriately; formulates coherent problem statements and hypotheses; synthesises insights from qualitative and quantitative sources; supports decision-making with well-reasoned recommendations."),
-        (3, "Advanced strategy specialist",      "Designs strategic analyses tailored to complex contexts; challenges assumptions and reframes strategic problems; evaluates strategic options with clear trade-off logic; integrates market, organisational, financial, and human factors; anticipates second-order and systemic effects."),
-        (4, "Strategy authority",   "Defines strategic direction for business units or organisations; designs strategic planning and governance processes; resolves ambiguous or conflicting strategic priorities; advises top decision-makers on long-term implications."),
-        (5, "Strategy architect / thought leader", "Develops new strategic concepts, models, or methodologies; influences organisational or industry strategic thinking; anticipates long-term economic, technological, and societal shifts; integrates strategy with transformation, culture, and governance."),
-    ],
-    "Leadership": [
-        (0, "Leadership aptitude",  "Demonstrates openness to responsibility and growth; shows awareness of own strengths and development areas; accepts guidance constructively; has the potential to develop professional leadership capabilities. No demonstrated leadership yet."),
-        (1, "Self-leadership",      "Takes ownership of own work, quality, and deadlines; acts reliably and consistently; seeks feedback and applies it; communicates clearly and professionally; demonstrates accountability for own outputs. Leads own work through professional discipline."),
-        (2, "Informal expert leadership", "Supports peers through content-based problem-solving; shares expertise proactively; influences others through professional reasoning and example; builds trust through competence and reliability. Leads peers through expertise, not authority."),
-        (3, "Team leadership",      "Leads teams, projects, or workstreams based on subject-matter authority; aligns people around goals and professional standards; guides performance and development through coaching; resolves conflicts using professional judgment. Leads delivery by integrating multiple areas of expertise."),
-        (4, "Organisational leadership", "Leads multiple teams or major organisational units through professional authority; shapes culture, values, and norms grounded in expertise; builds leadership and expert capability in others; aligns structures, processes, and people with strategic intent."),
-        (5, "Institutional leadership", "Shapes organisational identity, purpose, and long-term direction; influences leadership philosophy, governance, and professional ethics; acts as a moral, cultural, and professional reference point; represents the organisation externally as a trusted authority."),
-    ],
-    "Transformational": [
-        (0, "Transformational aptitude", "Understands that change and uncertainty are inherent to organisations; can function in evolving or unclear contexts with guidance; shows openness to learning and adjustment. Basic capacity to cope with change, not yet independent."),
-        (1, "Adaptive professional", "Operates effectively in changing, ambiguous contexts; adjusts approach as information evolves; maintains performance during transitions; learns and recalibrates continuously. Can function professionally in a VUCA environment."),
-        (2, "Independent change operator", "Anticipates change impacts on own work and immediate environment; reframes problems as contexts evolve; helps others navigate uncertainty; integrates legal, data, and strategic perspectives during change."),
-        (3, "Transformation lead",  "Designs and leads change initiatives; translates strategy into transition paths; aligns stakeholders during transformation; manages systemic interdependencies."),
-        (4, "Strategic transformation leader", "Shapes large-scale transformations; redesigns organisational systems and models; balances stability and change; acts as transformation reference authority. Enterprise-level transformation authority."),
-        (5, "System architect",     "Redefines how organisations adapt and evolve; creates new transformation paradigms; influences professional or industry thinking; anticipates long-term systemic shifts. Architect of systemic transformation."),
-    ],
+    "Legal / Core competency": {
+        "hint": "Solid legal expertise and ability to apply legal reasoning to business and organisational questions.",
+        "anchors": [
+            (0, "Aptitude",                      "Strong analytical and legal reasoning potential. Understands core legal logic conceptually but cannot yet apply it professionally."),
+            (1, "Legal foundation",              "Legally literate consultant — not yet an independent legal advisor. Understands core principles (employment, reward, governance, labour, social security, tax law); interprets standard positions with guidance."),
+            (2, "Independent legal professional","Fully functional legal professional. Independently analyses legal questions, translates law into business-relevant advice, and advises on standard scenarios without supervision."),
+            (3, "Advanced legal specialist",     "Trusted senior legal-strategic consultant. Handles complex, multi-dimensional questions independently; integrates law with reward strategy and governance; anticipates legal consequences of strategic choices."),
+            (4, "Legal authority",               "Legal authority in strategic consultancy context. Defines positions in complex or high-impact situations; shapes legal governance frameworks; acts as reference authority within the practice."),
+            (5, "Legal architect / thought leader", "Legal architect of strategic people and reward governance. Develops new methodologies; shapes how law is applied to reward strategy; influences professional or industry thinking."),
+        ],
+    },
+    "Data": {
+        "hint": "Data literacy and ability to work with structured analyses and computations.",
+        "anchors": [
+            (0, "Aptitude",               "Strong quantitative and analytical aptitude. Understands basic data, mathematical, and logical concepts but cannot yet apply them professionally."),
+            (1, "Foundational",           "Can perform basic calculations, use simple formulas, translate some business logic into Excel, and follow predefined models. Computation is mechanical and guided."),
+            (2, "Independent professional","Can build structured calculation models, perform multi-step computations, check consistency and logic, and apply quantitative reasoning independently. Minimum professional data level."),
+            (3, "Advanced professional",  "Can design complex computational models, integrate multiple datasets, handle assumptions and scenarios, and combine computation with analytical judgment. Tools: advanced Excel, Power Query, SQL."),
+            (4, "Expert",                 "Can design data and computation architectures, handle statistical or algorithmic complexity, and validate models conceptually. Tools: Python, R, SQL, BI, advanced modelling."),
+            (5, "Reference authority",    "Designs or defines advanced computational and analytical methodologies. Influences how data analysis is done across the firm — operates beyond tool-level expertise."),
+        ],
+    },
+    "Strategy": {
+        "hint": "Strategic thinking and ability to integrate legal and quantitative insights with strategic considerations.",
+        "anchors": [
+            (0, "Aptitude",                        "Demonstrates curiosity about how organisations create value. Can follow strategic reasoning but does not yet apply it independently."),
+            (1, "Strategy foundation",             "Strategically literate consultant — not yet an independent strategist. Applies standard tools under guidance; communicates strategic concepts clearly."),
+            (2, "Independent strategy professional","Conducts structured strategic analyses independently; formulates coherent problem statements; synthesises qualitative and quantitative insights; supports decision-making with well-reasoned recommendations."),
+            (3, "Advanced strategy specialist",    "Designs analyses tailored to complex contexts; challenges assumptions; evaluates strategic options with clear trade-off logic; integrates market, organisational, financial, and human factors."),
+            (4, "Strategy authority",              "Defines strategic direction for business units or organisations; designs strategic planning and governance processes; advises top decision-makers on long-term implications."),
+            (5, "Strategy architect / thought leader", "Develops new strategic concepts or methodologies; influences organisational or industry strategic thinking; integrates strategy with transformation, culture, and governance."),
+        ],
+    },
+    "Leadership": {
+        "hint": "Enabling others and the organisation to perform — not hierarchical authority. Requires at least level 2 across the three technical domains.",
+        "anchors": [
+            (0, "Leadership aptitude",        "No demonstrated leadership yet, but clear leadership potential. Demonstrates openness to responsibility; accepts guidance constructively."),
+            (1, "Self-leadership",            "Leads own work through professional discipline and judgment. Takes ownership of own work, quality, and deadlines; demonstrates accountability for own outputs."),
+            (2, "Informal expert leadership", "Leads peers through expertise, not authority. Supports peers through content-based problem-solving; shares expertise proactively; builds trust through competence and reliability."),
+            (3, "Team leadership",            "Leads delivery by integrating multiple areas of expertise. Leads teams or projects based on subject-matter authority; guides performance through coaching; resolves conflicts using professional judgment."),
+            (4, "Organisational leadership",  "Leads the organisation by setting professional direction and standards. Leads multiple teams through professional authority; shapes culture; builds leadership capability in others."),
+            (5, "Institutional leadership",   "Leads the institution through vision, credibility, and stewardship. Shapes organisational identity and long-term direction; acts as a moral and professional reference point."),
+        ],
+    },
+    "Transformational": {
+        "hint": "Capability to reshape business models, organisations, and systems over time. Requires at least level 2 across the three technical domains.",
+        "anchors": [
+            (0, "Transformational aptitude",      "Basic capacity to cope with change, not yet independent. Understands that change is inherent to organisations; shows openness to learning and adjustment."),
+            (1, "Adaptive professional",          "Can function professionally in a VUCA environment. Operates effectively in changing contexts; adjusts approach as information evolves; maintains performance during transitions."),
+            (2, "Independent change operator",    "Independent professional operating in change. Anticipates change impacts on own environment; helps others navigate uncertainty; integrates multiple perspectives during change."),
+            (3, "Transformation lead",            "Leads transformation initiatives. Designs and leads change initiatives; translates strategy into transition paths; aligns stakeholders; manages systemic interdependencies."),
+            (4, "Strategic transformation leader","Enterprise-level transformation authority. Shapes large-scale transformations; redesigns organisational systems and models; balances stability and change."),
+            (5, "System architect",               "Architect of systemic transformation. Redefines how organisations adapt; creates new transformation paradigms; influences professional or industry thinking."),
+        ],
+    },
 }
 
 def page_technical():
     page_header("Technical Competency",
                 "Multidisciplinary expertise across five domains · Weight: 12.5%", "Technical")
-    info_box("At Stratarius, <strong>leadership belongs to technical capability</strong> — because leadership without expertise has no legitimacy. Score each domain independently; at least one domain should score 0 or 1.")
-    st.markdown('<div class="card"><div class="card-title">Five Technical Domains</div>', unsafe_allow_html=True)
-    score_slider("Legal / Core competency", "tc_legal",
-        hint="Solid legal expertise; ability to apply legal reasoning to business and organizational questions")
-    score_slider("Data", "tc_data",
-        hint="Data literacy; ability to work with structured analyses and computations (e.g. Excel)")
-    score_slider("Strategy", "tc_strategy",
-        hint="Strategic thinking; ability to integrate legal and quantitative insights with strategic considerations")
-    score_slider("Leadership", "tc_leadership",
-        hint="Supporting peers, proactive knowledge sharing, creating trust and psychological safety")
-    score_slider("Transformational", "tc_transformational",
-        hint="Interest and capability to drive change; expanding expertise into new domains")
-    st.markdown('</div>', unsafe_allow_html=True)
+    info_box("At Stratarius, <strong>leadership belongs to technical capability</strong> — because leadership without expertise has no legitimacy. Score each domain independently; at least one domain should score 0 or 1. <strong>When in doubt, select the lower level.</strong>")
 
-    with st.expander("Score anchors — all five technical domains"):
-        tabs = st.tabs(list(TECH_ANCHORS.keys()))
-        for tab, (domain, rows) in zip(tabs, TECH_ANCHORS.items()):
-            with tab:
-                st.markdown("| Score | Level | Description |\n|--|--|--|")
-                for score, level, desc in rows:
-                    st.markdown(f"| **{score}** | {level} | {desc} |")
+    keys = ["tc_legal", "tc_data", "tc_strategy", "tc_leadership", "tc_transformational"]
+    for key, (domain, meta) in zip(keys, TECH_ANCHORS.items()):
+        anchor_radio(domain, key, meta["hint"], meta["anchors"])
 
-    tc = sum(st.session_state[k] for k in ["tc_legal","tc_data","tc_strategy","tc_leadership","tc_transformational"]) / 5
+    tc = sum(st.session_state[k] for k in keys) / 5
     st.markdown(f'<div style="margin:4px 0 16px 0;">{score_bar_html(tc)}</div>', unsafe_allow_html=True)
     st.caption(f"Technical Competency score: **{tc:.2f} / 5** (arithmetic average)")
     comment_box("comment_tc")
@@ -879,7 +919,7 @@ room for research and experimentation
 def export_excel(sc):
     s = st.session_state
     wb = Workbook()
-    navy="0C1B2E"; orange="E07B39"; light="F0F5FA"; mid="1A3A5C"
+    navy="164A41"; orange="E07B39"; light="EFF7F4"; mid="1D5C4E"
     thin = Side(style="thin", color="D1DDED")
     bdr  = Border(left=thin, right=thin, top=thin, bottom=thin)
     ctr  = Alignment(horizontal="center", vertical="center")
