@@ -1,4 +1,5 @@
 import streamlit as st
+import streamlit.components.v1 as components
 import pandas as pd
 import io
 import math
@@ -12,46 +13,46 @@ from openpyxl.utils import get_column_letter
 # PAY STRUCTURE
 # ──────────────────────────────────────────────────────────────────────────────
 PAY_STRUCTURE = {
-    "A6": {"score": 0.6, "salary": 2756.35, "mobility": 780},
-    "A7": {"score": 0.7, "salary": 2894.16, "mobility": 780},
-    "A8": {"score": 0.8, "salary": 3038.87, "mobility": 780},
-    "A9": {"score": 0.9, "salary": 3190.81, "mobility": 780},
-    "B0": {"score": 1.0, "salary": 3350.35, "mobility": 930},
-    "B1": {"score": 1.1, "salary": 3517.87, "mobility": 930},
-    "B2": {"score": 1.2, "salary": 3693.77, "mobility": 930},
-    "B3": {"score": 1.3, "salary": 3878.45, "mobility": 930},
-    "B4": {"score": 1.4, "salary": 4072.38, "mobility": 930},
-    "B5": {"score": 1.5, "salary": 4276.00, "mobility": 930},
-    "B6": {"score": 1.6, "salary": 4489.80, "mobility": 930},
-    "B7": {"score": 1.7, "salary": 4714.29, "mobility": 930},
-    "B8": {"score": 1.8, "salary": 4950.00, "mobility": 930},
-    "B9": {"score": 1.9, "salary": 5197.50, "mobility": 930},
-    "C0": {"score": 2.0, "salary": 5457.38, "mobility": 1080},
-    "C1": {"score": 2.1, "salary": 5730.24, "mobility": 1080},
-    "C2": {"score": 2.2, "salary": 6016.76, "mobility": 1080},
-    "C3": {"score": 2.3, "salary": 6317.59, "mobility": 1080},
-    "C4": {"score": 2.4, "salary": 6633.47, "mobility": 1080},
-    "C5": {"score": 2.5, "salary": 6965.15, "mobility": 1080},
-    "C6": {"score": 2.6, "salary": 7243.75, "mobility": 1080},
-    "C7": {"score": 2.7, "salary": 7533.50, "mobility": 1080},
-    "C8": {"score": 2.8, "salary": 7834.84, "mobility": 1080},
-    "C9": {"score": 2.9, "salary": 8148.24, "mobility": 1080},
-    "D0": {"score": 3.0, "salary": 8474.17, "mobility": 1230},
-    "D1": {"score": 3.1, "salary": 8813.13, "mobility": 1230},
-    "D2": {"score": 3.2, "salary": 9165.66, "mobility": 1230},
-    "D3": {"score": 3.3, "salary": 9532.28, "mobility": 1230},
-    "D4": {"score": 3.4, "salary": 9913.58, "mobility": 1230},
-    "D5": {"score": 3.5, "salary": 10310.12, "mobility": 1230},
-    "D6": {"score": 3.6, "salary": 10722.52, "mobility": 1230},
-    "D7": {"score": 3.7, "salary": 11151.42, "mobility": 1230},
-    "D8": {"score": 3.8, "salary": 11597.48, "mobility": 1230},
-    "D9": {"score": 3.9, "salary": 12061.38, "mobility": 1230},
-    "E0": {"score": 4.0, "salary": 12543.84, "mobility": 1380},
-    "E1": {"score": 4.1, "salary": 13045.59, "mobility": 1380},
-    "E2": {"score": 4.2, "salary": 13567.41, "mobility": 1380},
-    "E3": {"score": 4.3, "salary": 14110.11, "mobility": 1380},
-    "E4": {"score": 4.4, "salary": 14674.51, "mobility": 1380},
-    "E5": {"score": 4.5, "salary": 15261.49, "mobility": 1380},
+    "A6": {"score": 0.6, "salary": 2625.09, "mobility": 780},
+    "A7": {"score": 0.7, "salary": 2756.35, "mobility": 780},
+    "A8": {"score": 0.8, "salary": 2894.16, "mobility": 780},
+    "A9": {"score": 0.9, "salary": 3038.87, "mobility": 780},
+    "B0": {"score": 1.0, "salary": 3190.81, "mobility": 930},
+    "B1": {"score": 1.1, "salary": 3350.35, "mobility": 930},
+    "B2": {"score": 1.2, "salary": 3517.87, "mobility": 930},
+    "B3": {"score": 1.3, "salary": 3693.77, "mobility": 930},
+    "B4": {"score": 1.4, "salary": 3878.45, "mobility": 930},
+    "B5": {"score": 1.5, "salary": 4072.38, "mobility": 930},
+    "B6": {"score": 1.6, "salary": 4276.00, "mobility": 930},
+    "B7": {"score": 1.7, "salary": 4489.80, "mobility": 930},
+    "B8": {"score": 1.8, "salary": 4714.29, "mobility": 930},
+    "B9": {"score": 1.9, "salary": 4950.00, "mobility": 930},
+    "C0": {"score": 2.0, "salary": 5197.50, "mobility": 1080},
+    "C1": {"score": 2.1, "salary": 5457.38, "mobility": 1080},
+    "C2": {"score": 2.2, "salary": 5730.24, "mobility": 1080},
+    "C3": {"score": 2.3, "salary": 6016.76, "mobility": 1080},
+    "C4": {"score": 2.4, "salary": 6317.59, "mobility": 1080},
+    "C5": {"score": 2.5, "salary": 6633.47, "mobility": 1080},
+    "C6": {"score": 2.6, "salary": 6965.15, "mobility": 1080},
+    "C7": {"score": 2.7, "salary": 7243.75, "mobility": 1080},
+    "C8": {"score": 2.8, "salary": 7533.50, "mobility": 1080},
+    "C9": {"score": 2.9, "salary": 7834.84, "mobility": 1080},
+    "D0": {"score": 3.0, "salary": 8148.24, "mobility": 1230},
+    "D1": {"score": 3.1, "salary": 8474.17, "mobility": 1230},
+    "D2": {"score": 3.2, "salary": 8813.13, "mobility": 1230},
+    "D3": {"score": 3.3, "salary": 9165.66, "mobility": 1230},
+    "D4": {"score": 3.4, "salary": 9532.28, "mobility": 1230},
+    "D5": {"score": 3.5, "salary": 9913.58, "mobility": 1230},
+    "D6": {"score": 3.6, "salary": 10310.12, "mobility": 1230},
+    "D7": {"score": 3.7, "salary": 10722.52, "mobility": 1230},
+    "D8": {"score": 3.8, "salary": 11151.42, "mobility": 1230},
+    "D9": {"score": 3.9, "salary": 11597.48, "mobility": 1230},
+    "E0": {"score": 4.0, "salary": 12061.38, "mobility": 1380},
+    "E1": {"score": 4.1, "salary": 12543.84, "mobility": 1380},
+    "E2": {"score": 4.2, "salary": 13045.59, "mobility": 1380},
+    "E3": {"score": 4.3, "salary": 13567.41, "mobility": 1380},
+    "E4": {"score": 4.4, "salary": 14110.11, "mobility": 1380},
+    "E5": {"score": 4.5, "salary": 14674.51, "mobility": 1380},
 }
 
 SCORE_LABELS = {
@@ -1332,6 +1333,63 @@ def _logo_data_url():
         return None
     return f"data:image/png;base64,{base64.b64encode(p.read_bytes()).decode()}"
 
+def _inject_scroll_behavior(page_id: str):
+    """First visit → scroll to top. Revisit → restore previous scroll position.
+
+    Uses browser sessionStorage (persists within the same tab across Streamlit
+    reruns) and window.parent to reach the actual Streamlit scroll container
+    from inside the component iframe.
+    """
+    components.html(f"""
+<script>
+(function() {{
+    var pageId   = {repr(page_id)};
+    var posKey   = 'scroll_pos_'     + pageId;
+    var visitKey = 'scroll_visited_' + pageId;
+
+    function getScrollEl() {{
+        try {{
+            return window.parent.document.querySelector('[data-testid="stMain"]') ||
+                   window.parent.document.querySelector('.main') ||
+                   window.parent.document.documentElement;
+        }} catch(e) {{ return null; }}
+    }}
+
+    function applyScroll() {{
+        var el = getScrollEl();
+        if (!el) return;
+        if (!sessionStorage.getItem(visitKey)) {{
+            el.scrollTop = 0;
+            try {{ window.parent.scrollTo(0, 0); }} catch(e) {{}}
+            sessionStorage.setItem(visitKey, '1');
+        }} else {{
+            var pos = parseInt(sessionStorage.getItem(posKey) || '0', 10);
+            el.scrollTop = pos;
+            try {{ window.parent.scrollTo(0, pos); }} catch(e) {{}}
+        }}
+    }}
+
+    function saveScroll() {{
+        try {{
+            var el = getScrollEl();
+            var pos = (el && el.scrollTop) ? el.scrollTop
+                      : (window.parent.pageYOffset || 0);
+            sessionStorage.setItem(posKey, pos);
+        }} catch(e) {{}}
+    }}
+
+    // Apply after Streamlit content finishes painting
+    setTimeout(applyScroll, 120);
+    setTimeout(applyScroll, 400);
+
+    // Persist scroll position while the user scrolls
+    try {{ getScrollEl().addEventListener('scroll', saveScroll, {{passive: true}}); }} catch(e) {{}}
+    try {{ window.parent.addEventListener('scroll', saveScroll, {{passive: true}}); }} catch(e) {{}}
+}})();
+</script>
+""", height=0)
+
+
 def render_sidebar():
     sc = calculate_scores()
     cat = lookup_level(sc["final"])
@@ -1390,7 +1448,9 @@ def main():
         "results":        page_results,
         "info":           page_info,
     }
-    dispatch.get(st.session_state["_page"], page_job_info)()
+    current_page = st.session_state["_page"]
+    dispatch.get(current_page, page_job_info)()
+    _inject_scroll_behavior(current_page)
 
 
 if __name__ == "__main__":
