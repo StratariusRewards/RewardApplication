@@ -33,26 +33,26 @@ PAY_STRUCTURE = {
     "C3": {"score": 2.3, "salary": 6016.76, "mobility": 1080},
     "C4": {"score": 2.4, "salary": 6317.59, "mobility": 1080},
     "C5": {"score": 2.5, "salary": 6633.47, "mobility": 1080},
-    "C6": {"score": 2.6, "salary": 6965.15, "mobility": 1080},
-    "C7": {"score": 2.7, "salary": 7243.75, "mobility": 1080},
-    "C8": {"score": 2.8, "salary": 7533.50, "mobility": 1080},
-    "C9": {"score": 2.9, "salary": 7834.84, "mobility": 1080},
-    "D0": {"score": 3.0, "salary": 8148.24, "mobility": 1230},
-    "D1": {"score": 3.1, "salary": 8474.17, "mobility": 1230},
-    "D2": {"score": 3.2, "salary": 8813.13, "mobility": 1230},
-    "D3": {"score": 3.3, "salary": 9165.66, "mobility": 1230},
-    "D4": {"score": 3.4, "salary": 9532.28, "mobility": 1230},
-    "D5": {"score": 3.5, "salary": 9913.58, "mobility": 1230},
-    "D6": {"score": 3.6, "salary": 10310.12, "mobility": 1230},
-    "D7": {"score": 3.7, "salary": 10722.52, "mobility": 1230},
-    "D8": {"score": 3.8, "salary": 11151.42, "mobility": 1230},
-    "D9": {"score": 3.9, "salary": 11597.48, "mobility": 1230},
-    "E0": {"score": 4.0, "salary": 12061.38, "mobility": 1380},
-    "E1": {"score": 4.1, "salary": 12543.84, "mobility": 1380},
-    "E2": {"score": 4.2, "salary": 13045.59, "mobility": 1380},
-    "E3": {"score": 4.3, "salary": 13567.41, "mobility": 1380},
-    "E4": {"score": 4.4, "salary": 14110.11, "mobility": 1380},
-    "E5": {"score": 4.5, "salary": 14674.51, "mobility": 1380},
+    "C6": {"score": 2.6, "salary": 6898.81, "mobility": 1080},
+    "C7": {"score": 2.7, "salary": 7174.76, "mobility": 1080},
+    "C8": {"score": 2.8, "salary": 7461.76, "mobility": 1080},
+    "C9": {"score": 2.9, "salary": 7760.23, "mobility": 1080},
+    "D0": {"score": 3.0, "salary": 8070.63, "mobility": 1230},
+    "D1": {"score": 3.1, "salary": 8393.46, "mobility": 1230},
+    "D2": {"score": 3.2, "salary": 8729.20, "mobility": 1230},
+    "D3": {"score": 3.3, "salary": 9078.37, "mobility": 1230},
+    "D4": {"score": 3.4, "salary": 9441.50, "mobility": 1230},
+    "D5": {"score": 3.5, "salary": 9819.16, "mobility": 1230},
+    "D6": {"score": 3.6, "salary": 10211.93, "mobility": 1230},
+    "D7": {"score": 3.7, "salary": 10620.40, "mobility": 1230},
+    "D8": {"score": 3.8, "salary": 11045.22, "mobility": 1230},
+    "D9": {"score": 3.9, "salary": 11487.03, "mobility": 1230},
+    "E0": {"score": 4.0, "salary": 11946.51, "mobility": 1380},
+    "E1": {"score": 4.1, "salary": 12424.37, "mobility": 1380},
+    "E2": {"score": 4.2, "salary": 12921.35, "mobility": 1380},
+    "E3": {"score": 4.3, "salary": 13438.20, "mobility": 1380},
+    "E4": {"score": 4.4, "salary": 13975.73, "mobility": 1380},
+    "E5": {"score": 4.5, "salary": 14534.76, "mobility": 1380},
 }
 
 SCORE_LABELS = {
@@ -1087,10 +1087,9 @@ def page_results():
 
     # Top KPI row
     kpis = [("Final Score", f"{sc['final']:.1f}", True),
-            ("Raw Score",   f"{sc['raw']:.3f}", False),
             ("Pay Level",   cat, False),
             ("Base Salary", f"€{pay['salary']:,.0f}/mo", False)]
-    cols = st.columns(4)
+    cols = st.columns(3)
     for col, (label, val, hi) in zip(cols, kpis):
         extra = "metric-highlight" if hi else ""
         col.markdown(f"""<div class="metric-card {extra}">
@@ -1144,7 +1143,6 @@ def page_results():
                      "Professional Capital","Working Conditions","Level of Responsibility"]
         rows = [{"Dimension":n,"Score":round(s,3),"Weight":w,"Weighted":round(s*w,4)}
                 for n,s,w in zip(dim_names,scores_vals,weights)]
-        rows.append({"Dimension":"TOTAL","Score":"","Weight":sum(weights),"Weighted":round(sc["raw"],4)})
         st.dataframe(pd.DataFrame(rows), hide_index=True, use_container_width=True)
 
     st.markdown('<hr style="border:none;border-top:1px solid #EDF2F7;margin:20px 0;">', unsafe_allow_html=True)
