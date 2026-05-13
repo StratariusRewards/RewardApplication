@@ -89,24 +89,23 @@ SCORE_KEYS = [
     "resp_scope", "resp_auto", "resp_rev", "resp_dec",
 ]
 
-# Only Technical Competency and Professional Capital allow a score of 0,
-# with one exception: Legal has a floor of 1 because Stratarius is fundamentally
-# a legal advisory firm — at least one technical sub-dimension must therefore
-# score ≥ 1. This guarantees a minimum raw score of 0.650 (→ A6 in the pay
-# structure).
-ZERO_OK_KEYS = {
-    "tc_data", "tc_strategy", "tc_leadership", "tc_transformational",
-    "pc_cred", "pc_rel", "pc_org",
-}
+# A score of 0 is technically possible for every sub-dimension. In practice,
+# Stratarius is a legal advisory firm, so a legal profile should virtually
+# always score at least 1 on Legal — it therefore defaults to 1, while every
+# other sub-dimension defaults to 0.
+DEFAULT_SCORE_OVERRIDES = {"tc_legal": 1}
 
 def min_score(key):
-    return 0 if key in ZERO_OK_KEYS else 1
+    return 0
+
+def default_score(key):
+    return DEFAULT_SCORE_OVERRIDES.get(key, 0)
 
 DEFAULTS = {
     # Job info
     "job_name": "", "evaluator": "",
-    # Each score starts at its lowest allowed value (0 for TC/PC, 1 elsewhere)
-    **{k: min_score(k) for k in SCORE_KEYS},
+    # Each score starts at 0, with Legal as the only exception (default 1)
+    **{k: default_score(k) for k in SCORE_KEYS},
     # Per-sub-dimension reasoning (optional, free text)
     **{f"comment_{k}": "" for k in SCORE_KEYS},
     # Overall reasoning on Results page
@@ -494,7 +493,6 @@ def anchor_radio(domain, key, prompt, anchors):
     """Domain heading + prompt + radio + per-sub-dimension reasoning expander.
 
     `anchors` is a list of (score, level, description) tuples covering 0–5.
-    Sub-dimensions whose minimum is 1 simply skip the score-0 option.
     """
     lo = min_score(key)
     wkey = f"_w_{key}"
@@ -660,7 +658,7 @@ def page_technical():
     page_header("Technical Competency",
                 "Multidisciplinary expertise across five domains · Weight: 12.5% · Equally important as behavioural competency",
                 "Technical")
-    info_box("At Stratarius, <strong>leadership belongs to technical capability</strong> — because leadership without expertise has no legitimacy. Score each domain independently. The <strong>Legal</strong> domain has a minimum score of 1 since Stratarius is fundamentally a legal advisory firm; the other four domains can score 0. <strong>When in doubt, select the lower level.</strong>")
+    info_box("At Stratarius, <strong>leadership belongs to technical capability</strong> — because leadership without expertise has no legitimacy. Score each domain independently. Every domain can score 0–5; in practice the <strong>Legal</strong> domain is expected to score at least 1 since Stratarius is fundamentally a legal advisory firm, so it defaults to 1. <strong>When in doubt, select the lower level.</strong>")
 
     keys = ["tc_legal", "tc_data", "tc_strategy", "tc_leadership", "tc_transformational"]
     for key, (domain, meta) in zip(keys, TECH_ANCHORS.items()):
@@ -1197,7 +1195,7 @@ The pay level is based on the individual's capabilities *(looking back)* and the
 
 ### Scoring Methods
 
-- **Technical Competency:** Arithmetic average of 5 domains. Scores 0–5, except **Legal** which has a minimum of 1 (Stratarius is fundamentally a legal advisory firm). Only TC and PC allow scores of 0.
+- **Technical Competency:** Arithmetic average of 5 domains. All domains score 0–5. In practice, **Legal** defaults to 1 (Stratarius is fundamentally a legal advisory firm) but 0 remains technically possible.
 - **Behavioural Competency:** Weighted geometric mean — `(IC^0.3 × Freq^0.25 × Cons^0.25 × Conf^0.2) × 5`. Scores 1–5.
 - **Interaction Complexity rule:** 2+ scores of 5 → IC = 5 | 2+ scores of 4 → IC = 4 | else: rounded average.
 - **Effort:** `AVERAGE(mental subs) × 0.5 + AVERAGE(emotional subs) × 0.5`. Scores 1–5.
