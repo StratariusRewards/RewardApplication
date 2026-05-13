@@ -89,17 +89,21 @@ SCORE_KEYS = [
     "resp_scope", "resp_auto", "resp_rev", "resp_dec",
 ]
 
-# A score of 0 is technically possible for every sub-dimension. In practice,
-# Stratarius is a legal advisory firm, so a legal profile should virtually
-# always score at least 1 on Legal — it therefore defaults to 1, while every
-# other sub-dimension defaults to 0.
+# Only Technical Competency and Professional Capital sub-dimensions can score 0.
+# Behavioural Competency, Effort, Working Conditions and Responsibility have a
+# minimum of 1. Within TC, Legal can technically score 0, but in practice a
+# legal profile is expected to score at least 1, so it defaults to 1.
+ZERO_OK_KEYS = {
+    "tc_legal", "tc_data", "tc_strategy", "tc_leadership", "tc_transformational",
+    "pc_cred", "pc_rel", "pc_org",
+}
 DEFAULT_SCORE_OVERRIDES = {"tc_legal": 1}
 
 def min_score(key):
-    return 0
+    return 0 if key in ZERO_OK_KEYS else 1
 
 def default_score(key):
-    return DEFAULT_SCORE_OVERRIDES.get(key, 0)
+    return DEFAULT_SCORE_OVERRIDES.get(key, min_score(key))
 
 DEFAULTS = {
     # Job info
@@ -658,7 +662,7 @@ def page_technical():
     page_header("Technical Competency",
                 "Multidisciplinary expertise across five domains · Weight: 12.5% · Equally important as behavioural competency",
                 "Technical")
-    info_box("At Stratarius, <strong>leadership belongs to technical capability</strong> — because leadership without expertise has no legitimacy. Score each domain independently. Every domain can score 0–5; in practice the <strong>Legal</strong> domain is expected to score at least 1 since Stratarius is fundamentally a legal advisory firm, so it defaults to 1. <strong>When in doubt, select the lower level.</strong>")
+    info_box("At Stratarius, <strong>leadership belongs to technical capability</strong> — because leadership without expertise has no legitimacy. Score each domain independently. Every Technical Competency domain can score 0–5; in practice the <strong>Legal</strong> domain is expected to score at least 1 since Stratarius is fundamentally a legal advisory firm, so it defaults to 1. <strong>When in doubt, select the lower level.</strong>")
 
     keys = ["tc_legal", "tc_data", "tc_strategy", "tc_leadership", "tc_transformational"]
     for key, (domain, meta) in zip(keys, TECH_ANCHORS.items()):
@@ -1195,7 +1199,7 @@ The pay level is based on the individual's capabilities *(looking back)* and the
 
 ### Scoring Methods
 
-- **Technical Competency:** Arithmetic average of 5 domains. All domains score 0–5. In practice, **Legal** defaults to 1 (Stratarius is fundamentally a legal advisory firm) but 0 remains technically possible.
+- **Technical Competency:** Arithmetic average of 5 domains. Scores 0–5. **Legal** defaults to 1 (Stratarius is fundamentally a legal advisory firm) but 0 remains technically possible. Only TC and PC allow scores of 0.
 - **Behavioural Competency:** Weighted geometric mean — `(IC^0.3 × Freq^0.25 × Cons^0.25 × Conf^0.2) × 5`. Scores 1–5.
 - **Interaction Complexity rule:** 2+ scores of 5 → IC = 5 | 2+ scores of 4 → IC = 4 | else: rounded average.
 - **Effort:** `AVERAGE(mental subs) × 0.5 + AVERAGE(emotional subs) × 0.5`. Scores 1–5.
