@@ -1088,7 +1088,7 @@ def page_results():
     # Top KPI row
     kpis = [("Final Score", f"{sc['final']:.1f}", True),
             ("Pay Level",   cat, False),
-            ("Base Salary", f"€{pay['salary']:,.0f}/mo", False)]
+            ("Base Salary", f"€{pay['salary']:,.2f}/mo", False)]
     cols = st.columns(3)
     for col, (label, val, hi) in zip(cols, kpis):
         extra = "metric-highlight" if hi else ""
@@ -1415,7 +1415,7 @@ def render_sidebar():
   <div class="score-preview-label">Live Score</div>
   <div class="score-big">{sc['final']:.1f}</div>
   <div class="score-level">{cat}</div>
-  <div class="score-salary">€{pay['salary']:,.0f} / month gross</div>
+  <div class="score-salary">€{pay['salary']:,.2f} / month gross</div>
   <div class="score-bar-bg"><div class="score-bar-fill" style="width:{pct}%"></div></div>
 </div>""", unsafe_allow_html=True)
 
